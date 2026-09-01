@@ -1,0 +1,32 @@
+#!/usr/bin/env sh
+set -eu
+
+repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+package=${1:-}
+
+if [ -z "$package" ] || [ ! -d "$repo_root/packages/$package" ]; then
+    echo "usage: $0 <package-name>" >&2
+    exit 2
+fi
+
+for tool in rpmbuild spectool sha256sum; do
+    if ! command -v "$tool" >/dev/null 2>&1; then
+        echo "error: required tool not found: $tool" >&2
+        exit 1
+    fi
+done
+
+python3 "$repo_root/scripts/package_set.py" "$repo_root/package-set.yaml"
+python3 "$repo_root/scripts/repository_check.py" --root "$repo_root"
+
+package_dir="$repo_root/packages/$package"
+result_dir="$repo_root/results/srpm/$package"
+mkdir -p "$result_dir"
+
+cd "$package_dir"
+spectool -g "$package.spec"
+sha256sum --check sources
+rpmbuild -bs \
+    --define "_sourcedir $package_dir" \
+    --define "_srcrpmdir $result_dir" \
+    "$package.spec"

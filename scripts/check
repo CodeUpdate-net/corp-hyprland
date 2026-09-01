@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+set -eu
+
+repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$repo_root"
+
+python3 scripts/package_set.py package-set.yaml
+python3 scripts/repository_check.py --root "$repo_root"
+python3 -m json.tool schemas/package-set.schema.json >/dev/null
+python3 -m unittest discover -s tests -v
+
+if command -v rpmspec >/dev/null 2>&1; then
+    for spec in packages/*/*.spec; do
+        rpmspec --parse "$spec" >/dev/null
+    done
+else
+    echo "warning: rpmspec not installed; skipping RPM parse checks" >&2
+fi
+
+if command -v rpmlint >/dev/null 2>&1; then
+    rpmlint packages/*/*.spec
+else
+    echo "warning: rpmlint not installed; skipping RPM lint checks" >&2
+fi

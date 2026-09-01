@@ -1,0 +1,11 @@
+schema: 1
+release_set: "2026-09-01.1"
+
+# Packages are added after source, provenance, and Fedora-overlap review.
+packages:
+  hyprland-protocols:
+    upstream: https://github.com/hyprwm/hyprland-protocols
+    version: "0.7.0"
+    source_sha256: "ee419006d7cd20927b9b7c8b5fc430571c151b0385d600508de1a7957294498c"
+    tier: core
+    depends_on: []

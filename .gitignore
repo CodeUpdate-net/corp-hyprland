@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# RPM and Mock outputs
+*.rpm
+*.src.rpm
+*.tar.gz
+*.tar.xz
+*.tar.zst
+/results/
+/mock-results/
+
+# Local credentials and editor state
+.env
+.idea/
+.vscode/
+*~

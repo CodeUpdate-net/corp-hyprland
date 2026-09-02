@@ -1,6 +1,6 @@
 Name:           hyprpaper
 Version:        0.8.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Wayland wallpaper utility for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprpaper
@@ -18,6 +18,7 @@ BuildRequires:  pkgconfig(hyprwire)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(pixman-1)
 BuildRequires:  pkgconfig(wayland-client)
+BuildRequires:  pkgconfig(wayland-protocols)
 BuildRequires:  systemd-rpm-macros
 
 %description
@@ -40,5 +41,8 @@ Hyprpaper is a fast wallpaper utility with per-output support.
 %{_userunitdir}/hyprpaper.service
 
 %changelog
+* Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.8.4-2
+- Add the Wayland protocols needed by the source scanner
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.8.4-1
 - Initial package

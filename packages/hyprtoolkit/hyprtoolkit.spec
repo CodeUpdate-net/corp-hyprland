@@ -1,6 +1,6 @@
 Name:           hyprtoolkit
 Version:        0.5.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Hyprland graphical user interface toolkit
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprtoolkit
@@ -32,6 +32,9 @@ First-party GUI toolkit shared by Hyprland applications.
 %package devel
 Summary:        Development files for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       pkgconfig(aquamarine) >= 0.10.0
+Requires:       pkgconfig(hyprgraphics) >= 0.3.0
+Requires:       pkgconfig(hyprutils) >= 0.11.0
 
 %description devel
 Headers and pkg-config metadata for developing against %{name}.
@@ -57,5 +60,8 @@ Headers and pkg-config metadata for developing against %{name}.
 %{_libdir}/pkgconfig/hyprtoolkit.pc
 
 %changelog
+* Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.5.4-2
+- Add development dependencies exposed by public headers
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.5.4-1
 - Initial package

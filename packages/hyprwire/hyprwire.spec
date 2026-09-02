@@ -1,6 +1,6 @@
 Name:           hyprwire
 Version:        0.3.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Hyprland IPC wire protocol library
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprwire
@@ -19,6 +19,7 @@ Fast and consistent wire protocol and scanner for Hyprland IPC.
 %package devel
 Summary:        Development files and scanner for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       pkgconfig(hyprutils) >= 0.9.0
 
 %description devel
 Headers, scanner, and build metadata for developing against %{name}.
@@ -32,6 +33,8 @@ Headers, scanner, and build metadata for developing against %{name}.
 
 %install
 %cmake_install
+sed -i '/^Version:/a Requires: hyprutils >= 0.9.0' \
+  %{buildroot}%{_libdir}/pkgconfig/hyprwire.pc
 
 %files
 %license LICENSE
@@ -47,5 +50,8 @@ Headers, scanner, and build metadata for developing against %{name}.
 %{_libdir}/cmake/hyprwire-scanner/
 
 %changelog
+* Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.3.1-2
+- Add development dependency exposed by public headers
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.3.1-1
 - Initial package

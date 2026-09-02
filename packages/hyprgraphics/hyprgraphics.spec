@@ -1,6 +1,6 @@
 Name:           hyprgraphics
 Version:        0.5.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Graphics library for the Hyprland ecosystem
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprgraphics
@@ -31,6 +31,9 @@ Graphics and resource utilities shared by Hyprland projects.
 %package devel
 Summary:        Development files for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       pkgconfig(cairo)
+Requires:       pkgconfig(glesv2)
+Requires:       pkgconfig(hyprutils)
 
 %description devel
 Headers and pkg-config metadata for developing against %{name}.
@@ -44,6 +47,8 @@ Headers and pkg-config metadata for developing against %{name}.
 
 %install
 %cmake_install
+sed -i '/^Version:/a Requires: cairo, glesv2, hyprutils' \
+  %{buildroot}%{_libdir}/pkgconfig/hyprgraphics.pc
 
 %check
 %ctest
@@ -59,5 +64,8 @@ Headers and pkg-config metadata for developing against %{name}.
 %{_libdir}/pkgconfig/hyprgraphics.pc
 
 %changelog
+* Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.5.1-2
+- Add development dependencies exposed by public headers
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.5.1-1
 - Initial package

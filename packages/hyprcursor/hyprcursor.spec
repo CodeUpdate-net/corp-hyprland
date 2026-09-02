@@ -1,6 +1,6 @@
 Name:           hyprcursor
 Version:        0.1.13
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Hyprland cursor format library and utilities
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprcursor
@@ -22,6 +22,7 @@ Library and conversion utility for the Hyprland cursor format.
 %package devel
 Summary:        Development files for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       pkgconfig(cairo)
 
 %description devel
 Headers and pkg-config metadata for developing against %{name}.
@@ -35,6 +36,8 @@ Headers and pkg-config metadata for developing against %{name}.
 
 %install
 %cmake_install
+sed -i '/^Version:/a Requires: cairo' \
+  %{buildroot}%{_libdir}/pkgconfig/hyprcursor.pc
 
 %files
 %license LICENSE
@@ -49,5 +52,8 @@ Headers and pkg-config metadata for developing against %{name}.
 %{_libdir}/pkgconfig/hyprcursor.pc
 
 %changelog
+* Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.1.13-2
+- Add development dependency exposed by public headers
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.1.13-1
 - Initial package with safe shell quoting for XCursor paths

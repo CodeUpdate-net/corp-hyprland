@@ -1,6 +1,6 @@
 Name:           aquamarine
 Version:        0.15.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Lightweight Linux rendering backend library
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/aquamarine
@@ -29,6 +29,9 @@ Aquamarine is the display and rendering backend library used by Hyprland.
 %package devel
 Summary:        Development files for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       pkgconfig(hyprutils) >= 0.8.0
+Requires:       pkgconfig(libdrm)
+Requires:       pkgconfig(wayland-client)
 
 %description devel
 Headers and pkg-config metadata for developing against %{name}.
@@ -42,6 +45,8 @@ Headers and pkg-config metadata for developing against %{name}.
 
 %install
 %cmake_install
+sed -i '/^Version:/a Requires: hyprutils >= 0.8.0, libdrm, wayland-client' \
+  %{buildroot}%{_libdir}/pkgconfig/aquamarine.pc
 
 %files
 %license LICENSE
@@ -54,5 +59,8 @@ Headers and pkg-config metadata for developing against %{name}.
 %{_libdir}/pkgconfig/aquamarine.pc
 
 %changelog
+* Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.15.0-2
+- Add development dependencies exposed by public headers
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.15.0-1
 - Initial package

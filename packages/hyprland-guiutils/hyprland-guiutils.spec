@@ -1,6 +1,6 @@
 Name:           hyprland-guiutils
 Version:        0.2.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Graphical utilities for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprland-guiutils
@@ -16,6 +16,8 @@ BuildRequires:  pkgconfig(hyprutils) >= 0.10.2
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(pixman-1)
 BuildRequires:  pkgconfig(xkbcommon)
+
+Requires:       /usr/bin/xdg-open
 
 %description
 Dialog, welcome, update, donation, and command-running utilities for Hyprland.
@@ -40,5 +42,8 @@ Dialog, welcome, update, donation, and command-running utilities for Hyprland.
 %{_bindir}/hyprland-welcome
 
 %changelog
+* Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.2.2-2
+- Require xdg-open for the support, news, and wiki buttons
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.2.2-1
 - Initial package

@@ -1,5 +1,5 @@
 schema: 1
-release_set: "2026-09-01.6"
+release_set: "2026-09-01.7"
 
 packages:
   glaze:
@@ -23,6 +23,13 @@ packages:
     source_sha256: "5cb20f1a3562787a61f4aba7f4357369a72cd7ccec2ce4752048bea018b5aa71"
     tier: core
     depends_on: []
+  hyprshot:
+    upstream: https://github.com/Gustash/hyprshot
+    version: "1.3.0"
+    source_commit: "054b8967c4adcb56f0f71e3e3f54ba5febdbcca2"
+    source_sha256: "315bdbe66ee473d811b9af8447bd32124e84d873396ef8ab5ac3f040294f6739"
+    tier: application
+    depends_on: [hyprland]
   hyprland-protocols:
     upstream: https://github.com/hyprwm/hyprland-protocols
     version: "0.7.0"

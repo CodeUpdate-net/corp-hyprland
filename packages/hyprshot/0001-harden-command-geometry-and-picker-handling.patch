@@ -1,0 +1,325 @@
+From: Hyprland COPR Maintainer <noreply@example.invalid>
+Subject: [PATCH] Harden command, geometry, and picker handling
+
+Keep external values out of jq programs, preserve forwarded command arguments,
+validate geometry before arithmetic expansion, and terminate only the
+hyprpicker process started by this invocation. Also fix the short --raw option
+so it does not consume the next argument.
+
+---
+ hyprshot | 146 +++++++++++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 90 insertions(+), 56 deletions(-)
+
+diff --git a/hyprshot b/hyprshot
+index 6a5293c..6a8f202 100755
+--- a/hyprshot
++++ b/hyprshot
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env bash
+ 
+-set -e
++set -eo pipefail
+ 
+ function Help() {
+     cat <<EOF
+@@ -53,9 +53,12 @@ function send_notification() {
+         return 0
+     fi
+ 
+-    local message=$([ $CLIPBOARD -eq 1 ] && \
+-        echo "Image copied to the clipboard" || \
+-        echo "Image saved in <i>${1}</i> and copied to the clipboard.")
++    local message
++    if [ $CLIPBOARD -eq 1 ]; then
++        message="Image copied to the clipboard"
++    else
++        message="Image saved in <i>${1}</i> and copied to the clipboard."
++    fi
+     notify-send "Screenshot saved" \
+                 "${message}" \
+                 -t "$NOTIF_TIMEOUT" -i "${1}" -a Hyprshot
+@@ -64,18 +67,31 @@ function send_notification() {
+ function trim() {
+     Print "Geometry: %s\n" "${1}"
+     local geometry="${1}"
+-    local xy_str=$(echo "${geometry}" | cut -d' ' -f1)
+-    local wh_str=$(echo "${geometry}" | cut -d' ' -f2)
+-    local x=`echo "${xy_str}" | cut -d',' -f1`
+-    local y=`echo "${xy_str}" | cut -d',' -f2`
+-    local width=`echo "${wh_str}" | cut -dx -f1`
+-    local height=`echo "${wh_str}" | cut -dx -f2`
++    if [[ ! "$geometry" =~ ^-?[0-9]+,-?[0-9]+[[:space:]][0-9]+x[0-9]+$ ]]; then
++        Print "Invalid geometry: %s\n" "$geometry"
++        return 1
++    fi
+ 
+-    local max_width=`hyprctl monitors -j | jq -r '[.[] | if (.transform % 2 == 0) then (.x + .width) else (.x + .height) end] | max'`
+-    local max_height=`hyprctl monitors -j | jq -r '[.[] | if (.transform % 2 == 0) then (.y + .height) else (.y + .width) end] | max'`
++    local xy_str="${geometry%% *}"
++    local wh_str="${geometry#* }"
++    local x="${xy_str%%,*}"
++    local y="${xy_str#*,}"
++    local width="${wh_str%%x*}"
++    local height="${wh_str#*x}"
+ 
+-    local min_x=`hyprctl monitors -j | jq -r '[.[] | (.x)] | min'`
+-    local min_y=`hyprctl monitors -j | jq -r '[.[] | (.y)] | min'`
++    local max_width
++    local max_height
++    local min_x
++    local min_y
++    max_width=$(hyprctl monitors -j | jq -r '[.[] | if (.transform % 2 == 0) then (.x + .width) else (.x + .height) end] | max')
++    max_height=$(hyprctl monitors -j | jq -r '[.[] | if (.transform % 2 == 0) then (.y + .height) else (.y + .width) end] | max')
++    min_x=$(hyprctl monitors -j | jq -r '[.[] | .x] | min')
++    min_y=$(hyprctl monitors -j | jq -r '[.[] | .y] | min')
++
++    local value
++    for value in "$max_width" "$max_height" "$min_x" "$min_y"; do
++        [[ "$value" =~ ^-?[0-9]+$ ]] || return 1
++    done
+ 
+     local cropped_x=$x
+     local cropped_y=$y
+@@ -98,11 +114,12 @@ function trim() {
+         cropped_height=$((cropped_height + y - min_y))
+     fi
+ 
+-    local cropped=`printf "%s,%s %sx%s\n" \
++    local cropped
++    cropped=$(printf "%s,%s %sx%s\n" \
+         "${cropped_x}" "${cropped_y}" \
+-        "${cropped_width}" "${cropped_height}"`
++        "${cropped_width}" "${cropped_height}")
+     Print "Crop: %s\n" "${cropped}"
+-    echo ${cropped}
++    echo "${cropped}"
+ }
+ 
+ function save_geometry() {
+@@ -119,55 +136,55 @@ function save_geometry() {
+         grim -g "${geometry}" "$SAVE_FULLPATH"
+         output="$SAVE_FULLPATH"
+         wl-copy --type image/png < "$output"
+-        [ -z "$COMMAND" ] || {
+-            "$COMMAND" "$output"
+-        }
++        if ((${#COMMAND[@]})); then
++            "${COMMAND[@]}" "$output"
++        fi
+     else
+         wl-copy --type image/png < <(grim -g "${geometry}" -)
+     fi
+ 
+-    send_notification $output
++    send_notification "$output"
+ }
+ 
+-function checkRunning() {
+-    sleep 1
+-    while [[ 1 == 1 ]]; do
+-        if [[ $(pgrep slurp | wc -m) == 0 ]]; then
+-            pkill hyprpicker
+-            exit
+-        fi
+-    done
++function cleanup_picker() {
++    if [[ -n "${HYPRPICKER_PID:-}" ]]; then
++        kill "$HYPRPICKER_PID" 2>/dev/null || true
++        wait "$HYPRPICKER_PID" 2>/dev/null || true
++        HYPRPICKER_PID=""
++    fi
+ }
+ 
+ function begin_grab() {
+     if [ $FREEZE -eq 1 ] && [ "$(command -v "hyprpicker")" ] >/dev/null 2>&1; then
+         hyprpicker -r -z &
+-        sleep 0.2
+         HYPRPICKER_PID=$!
++        sleep 0.2
+     fi
+-    local option=$1
++    local option="$1"
++    local geometry=""
+     case $option in
+         output)
+             if [ $CURRENT -eq 1 ]; then
+-                local geometry=`grab_active_output`
+-            elif [ -z $SELECTED_MONITOR ]; then
+-                local geometry=`grab_output`
++                geometry=$(grab_active_output)
++            elif [ -z "$SELECTED_MONITOR" ]; then
++                geometry=$(grab_output)
+             else
+-                local geometry=`grab_selected_output $SELECTED_MONITOR`
++                geometry=$(grab_selected_output "$SELECTED_MONITOR")
+             fi
+             ;;
+         region)
+-            local geometry=`grab_region`
++            geometry=$(grab_region)
+             ;;
+         window)
+             if [ $CURRENT -eq 1 ]; then
+-                local geometry=`grab_active_window`
++                geometry=$(grab_active_window)
+             else
+-                local geometry=`grab_window`
++                geometry=$(grab_window)
+             fi
+-	    geometry=`trim "${geometry}"`
++            geometry=$(trim "${geometry}")
+             ;;
+     esac
++    cleanup_picker
+     save_geometry "${geometry}"
+ }
+ 
+@@ -176,19 +193,27 @@ function grab_output() {
+ }
+ 
+ function grab_active_output() {
+-    local active_workspace=`hyprctl -j activeworkspace`
+-    local monitors=`hyprctl -j monitors`
++    local active_workspace
++    local monitors
++    local current_monitor
++    active_workspace=$(hyprctl -j activeworkspace)
++    monitors=$(hyprctl -j monitors)
+     Print "Monitors: %s\n" "$monitors"
+     Print "Active workspace: %s\n" "$active_workspace"
+-    local current_monitor="$(echo $monitors | jq -r 'first(.[] | select(.activeWorkspace.id == '$(echo $active_workspace | jq -r '.id')'))')"
++    current_monitor=$(jq -r --argjson workspace "$active_workspace" \
++        'first(.[] | select(.activeWorkspace.id == $workspace.id))' <<< "$monitors")
+     Print "Current output: %s\n" "$current_monitor"
+-    echo $current_monitor | jq -r '"\(.x),\(.y) \(.width/.scale|round)x\(.height/.scale|round)"'
++    jq -r '"\(.x),\(.y) \(.width/.scale|round)x\(.height/.scale|round)"' \
++        <<< "$current_monitor"
+ }
+ 
+ function grab_selected_output() {
+-    local monitor=`hyprctl -j monitors | jq -r '.[] | select(.name == "'$(echo $1)'")'`
++    local monitor
++    monitor=$(hyprctl -j monitors | jq -r --arg name "$1" \
++        '.[] | select(.name == $name)')
+     Print "Capturing: %s\n" "${1}"
+-    echo $monitor | jq -r '"\(.x),\(.y) \(.width/.scale|round)x\(.height/.scale|round)"'
++    jq -r '"\(.x),\(.y) \(.width/.scale|round)x\(.height/.scale|round)"' \
++        <<< "$monitor"
+ }
+ 
+ function grab_region() {
+@@ -196,20 +221,30 @@ function grab_region() {
+ }
+ 
+ function grab_window() {
+-    local monitors=`hyprctl -j monitors`
+-    local clients=`hyprctl -j clients | jq -r '[.[] | select(.workspace.id | contains('$(echo $monitors | jq -r 'map(.activeWorkspace.id) | join(",")')'))]'`
++    local monitors
++    local active_workspaces
++    local clients
++    monitors=$(hyprctl -j monitors)
++    active_workspaces=$(jq '[.[].activeWorkspace.id]' <<< "$monitors")
++    clients=$(hyprctl -j clients | jq -r --argjson ids "$active_workspaces" \
++        '[.[] | select(.workspace.id as $id | $ids | index($id))]')
+     Print "Monitors: %s\n" "$monitors"
+     Print "Clients: %s\n" "$clients"
+     # Generate boxes for each visible window and send that to slurp
+     # through stdin
+-    local boxes="$(echo $clients | jq -r '.[] | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1]) \(.title)"' | cut -f1,2 -d' ')"
++    local boxes
++    boxes=$(jq -r '.[] | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1]) \(.title)"' \
++        <<< "$clients" | cut -f1,2 -d' ')
+     Print "Boxes:\n%s\n" "$boxes"
+     slurp -r <<< "$boxes"
+ }
+ 
+ function grab_active_window() {
+-    local active_window=`hyprctl -j activewindow`
+-    local box=$(echo $active_window | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' | cut -f1,2 -d' ')
++    local active_window
++    local box
++    active_window=$(hyprctl -j activewindow)
++    box=$(jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' \
++        <<< "$active_window" | cut -f1,2 -d' ')
+     Print "Box:\n%s\n" "$box"
+     echo "$box"
+ }
+@@ -225,14 +260,16 @@ function parse_mode() {
+             CURRENT=1
+             ;;
+         *)
+-            hyprctl monitors -j | jq -re '.[] | select(.name == "'$(echo $mode)'")' &>/dev/null
++            hyprctl monitors -j | jq -re --arg name "$mode" \
++                '.[] | select(.name == $name)' &>/dev/null
+             SELECTED_MONITOR=$mode
+             ;;
+     esac
+ }
+ 
+ function args() {
+-    local options=$(getopt -o hf:o:m:dszr:t: --long help,filename:,output-folder:,mode:,clipboard-only,debug,silent,freeze,raw,notif-timeout: -- "$@")
++    local options
++    options=$(getopt -o hf:o:m:dszrt: --long help,filename:,output-folder:,mode:,clipboard-only,debug,silent,freeze,raw,notif-timeout: -- "$@")
+     eval set -- "$options"
+ 
+     while true; do
+@@ -251,7 +288,7 @@ function args() {
+                 ;;
+             -m | --mode)
+                 shift;
+-                parse_mode $1
++                parse_mode "$1"
+                 ;;
+             --clipboard-only)
+                 CLIPBOARD=1
+@@ -274,19 +311,19 @@ function args() {
+                 ;;
+             --)
+                 shift # Skip -- argument
+-                COMMAND=${@:2}
++                COMMAND=("${@:2}")
+                 break;;
+         esac
+         shift
+     done
+ 
+-    if [ -z $OPTION ]; then
++    if [ -z "$OPTION" ]; then
+         Print "A mode is required\n\nAvailable modes are:\n\toutput\n\tregion\n\twindow\n"
+         exit 2
+     fi
+ }
+ 
+-if [ -z $1 ]; then
++if [ -z "${1:-}" ]; then
+     Help
+     exit
+ fi
+@@ -298,12 +335,23 @@ RAW=0
+ NOTIF_TIMEOUT=5000
+ CURRENT=0
+ FREEZE=0
+-[ -z "$XDG_PICTURES_DIR" ] && type xdg-user-dir &> /dev/null && XDG_PICTURES_DIR=$(xdg-user-dir PICTURES)
++OPTION=""
++SELECTED_MONITOR=""
++HYPRPICKER_PID=""
++COMMAND=()
++[ -z "${XDG_PICTURES_DIR:-}" ] && type xdg-user-dir &> /dev/null && XDG_PICTURES_DIR=$(xdg-user-dir PICTURES)
+ FILENAME="$(date +'%Y-%m-%d-%H%M%S_hyprshot.png')"
+-[ -z "$HYPRSHOT_DIR" ] && SAVEDIR=${XDG_PICTURES_DIR:=~} || SAVEDIR=${HYPRSHOT_DIR}
++if [ -z "${HYPRSHOT_DIR:-}" ]; then
++    SAVEDIR="${XDG_PICTURES_DIR:-$HOME}"
++else
++    SAVEDIR="$HYPRSHOT_DIR"
++fi
+ 
+-args $0 "$@"
++args "$0" "$@"
+ 
+ SAVE_FULLPATH="$SAVEDIR/$FILENAME"
+ [ $CLIPBOARD -eq 0 ] && Print "Saving in: %s\n" "$SAVE_FULLPATH"
+-begin_grab $OPTION & checkRunning
++trap cleanup_picker EXIT
++trap 'exit 130' INT
++trap 'exit 143' TERM
++begin_grab "$OPTION"

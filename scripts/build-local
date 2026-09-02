@@ -4,7 +4,22 @@ set -eu
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 package=${1:-}
 
-if [ -z "$package" ] || [ ! -d "$repo_root/packages/$package" ]; then
+case "$package" in
+    [a-z0-9]*) ;;
+    *)
+        echo "usage: $0 <package-name>" >&2
+        exit 2
+        ;;
+esac
+
+case "$package" in
+    *[!a-z0-9+._-]*)
+        echo "usage: $0 <package-name>" >&2
+        exit 2
+        ;;
+esac
+
+if [ ! -d "$repo_root/packages/$package" ]; then
     echo "usage: $0 <package-name>" >&2
     exit 2
 fi

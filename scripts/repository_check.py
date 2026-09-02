@@ -23,8 +23,11 @@ RPM_SECTION_RE = re.compile(
 )
 OFFLINE_SECTIONS = frozenset({"prep", "build", "install", "check"})
 NETWORK_COMMAND_RE = re.compile(
-    r"(?:^|[;&|]\s*|\s)(?:curl|wget|git\s+clone|go\s+get|cargo\s+fetch|pip(?:3)?\s+install)(?:\s|$)"
+    r"(?:^|[;&|]\s*|\s)(?:curl|wget|git\s+(?:clone|fetch|pull|submodule)|"
+    r"go\s+get|cargo\s+fetch|pip(?:3)?\s+install|npm\s+(?:ci|install)|"
+    r"meson\s+wrap|conan\s+install)(?:\s|$)"
 )
+SCRIPTLET_RE = re.compile(r"^%(?:pre|post|preun|postun|trigger\w*)\b")
 
 
 @dataclass(frozen=True)
@@ -32,7 +35,6 @@ class PackageFiles:
     directory: Path
     spec: Path
     sources: Path
-    readme: Path
 
 
 def _package_files(root: Path, package: str) -> PackageFiles:
@@ -41,7 +43,6 @@ def _package_files(root: Path, package: str) -> PackageFiles:
         directory=directory,
         spec=directory / f"{package}.spec",
         sources=directory / "sources",
-        readme=directory / "README.md",
     )
 
 
@@ -75,8 +76,15 @@ def _expand_known_macros(value: str, fields: dict[str, str]) -> str:
 
 def _source_filename(url: str, location: Path) -> str:
     parsed = urlsplit(url)
-    if parsed.scheme != "https" or not parsed.netloc:
-        raise ManifestError(f"{location} Source0 must resolve to an HTTPS URL")
+    if (
+        parsed.scheme != "https"
+        or not parsed.netloc
+        or parsed.username
+        or parsed.password
+    ):
+        raise ManifestError(
+            f"{location} Source0 must resolve to an HTTPS URL without credentials"
+        )
     candidate = parsed.fragment.lstrip("/") if parsed.fragment else Path(parsed.path).name
     if not candidate or "/" in candidate:
         raise ManifestError(f"{location} Source0 must resolve to one archive filename")
@@ -118,11 +126,19 @@ def _check_no_build_network(path: Path, text: str) -> None:
             )
 
 
+def _check_no_scriptlets(path: Path, text: str) -> None:
+    for number, line in enumerate(text.splitlines(), start=1):
+        if SCRIPTLET_RE.match(line):
+            raise ManifestError(
+                f"{path}:{number} contains a privileged RPM scriptlet"
+            )
+
+
 def _check_package(root: Path, package: Package) -> None:
     files = _package_files(root, package.name)
     if not files.directory.is_dir():
         raise ManifestError(f"missing package directory: {files.directory}")
-    for path in (files.spec, files.sources, files.readme):
+    for path in (files.spec, files.sources):
         if not path.is_file():
             raise ManifestError(f"missing required package file: {path}")
 
@@ -144,6 +160,12 @@ def _check_package(root: Path, package: Package) -> None:
 
     source_url = _expand_known_macros(fields["source0"], fields)
     source_name = _source_filename(source_url, files.spec)
+    source_host = urlsplit(source_url).hostname
+    upstream_host = urlsplit(package.upstream).hostname
+    if source_host != upstream_host:
+        raise ManifestError(
+            f"{files.spec} Source0 host does not match manifest upstream host"
+        )
     sources = _source_entries(files.sources)
     if source_name not in sources:
         raise ManifestError(f"{files.sources} has no checksum for Source0 {source_name}")
@@ -152,6 +174,7 @@ def _check_package(root: Path, package: Package) -> None:
             f"{files.sources} checksum for {source_name} does not match manifest"
         )
     _check_no_build_network(files.spec, spec_text)
+    _check_no_scriptlets(files.spec, spec_text)
 
 
 def check_repository(root: Path, manifest: PackageSet) -> None:

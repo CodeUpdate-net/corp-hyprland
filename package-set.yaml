@@ -1,11 +1,212 @@
 schema: 1
-release_set: "2026-09-01.1"
+release_set: "2026-09-01.3"
 
-# Packages are added after source, provenance, and Fedora-overlap review.
 packages:
+  glaze:
+    upstream: https://github.com/stephenberry/glaze
+    version: "7.2.0"
+    source_commit: "b518eec7a22e56ffa238b072c07f47efa7cea97f"
+    source_sha256: "17dba19ae63ae48f94994f00d49d5cb3c8f1306db1046c534c4828662490b7d4"
+    tier: compatibility
+    depends_on: []
+  lua55:
+    upstream: https://github.com/lua/lua
+    version: "5.5.0"
+    source_commit: "a5522f06d2679b8f18534fd6a9968f7eb539dc31"
+    source_sha256: "a33484f7ce4c14e12ea4d51cc5a7353bff2796a8074004b96ae2dc246f33f16e"
+    tier: compatibility
+    depends_on: []
   hyprland-protocols:
     upstream: https://github.com/hyprwm/hyprland-protocols
     version: "0.7.0"
+    source_commit: "bd153e76f751f150a09328dbdeb5e4fab9d23622"
     source_sha256: "ee419006d7cd20927b9b7c8b5fc430571c151b0385d600508de1a7957294498c"
     tier: core
     depends_on: []
+  hyprwayland-scanner:
+    upstream: https://github.com/hyprwm/hyprwayland-scanner
+    version: "0.4.6"
+    source_commit: "b8632713a6beaf28b56f2a7b0ab2fb7088dbb404"
+    source_sha256: "05f55fd1a20d8ca81b5030980fdb7c87147749230145bdb3745af2741d617f5c"
+    tier: core
+    depends_on: []
+  hyprutils:
+    upstream: https://github.com/hyprwm/hyprutils
+    version: "0.14.1"
+    source_commit: "2db328fe2b3e8b6a2eee5d17a91ff1ca4177719f"
+    source_sha256: "e8cfb093d8124de1e63d3635b7d749758d0919c2e1b3ce44462ef7ab003060c4"
+    tier: core
+    depends_on: []
+  hyprlang:
+    upstream: https://github.com/hyprwm/hyprlang
+    version: "0.6.8"
+    source_commit: "3a1c1b25b059dae2c6bbc46991562ba1158d125c"
+    source_sha256: "d10a0778b646e04d83e8b90cc0f764fb96958c01a15c3c0678d95a40fc647ed5"
+    tier: core
+    depends_on: [hyprutils]
+  hyprgraphics:
+    upstream: https://github.com/hyprwm/hyprgraphics
+    version: "0.5.1"
+    source_commit: "482d4b7ec36ffdaf3573086aa586b178fd5404be"
+    source_sha256: "861ecaad872835922dd5745a612d7a4cc7bfc4babb1d06bc92bc63c2ac013b74"
+    tier: core
+    depends_on: [hyprutils]
+  hyprcursor:
+    upstream: https://github.com/hyprwm/hyprcursor
+    version: "0.1.13"
+    source_commit: "44e91d467bdad8dcf8bbd2ac7cf49972540980a5"
+    source_sha256: "82af8b2ce27242ffdd6baebaa71b3f6c8665dc25c52bfcfccc16912622896af8"
+    tier: core
+    depends_on: [hyprlang]
+  hyprwire:
+    upstream: https://github.com/hyprwm/hyprwire
+    version: "0.3.1"
+    source_commit: "3e6865ce5fd9237b58f5b2ce5de18814df3baff5"
+    source_sha256: "92a673d40ae6a7d66fbcd0a34ec071e026e17eaeeb0040c3375e4b2a80dba737"
+    tier: core
+    depends_on: [hyprutils]
+  aquamarine:
+    upstream: https://github.com/hyprwm/aquamarine
+    version: "0.15.0"
+    source_commit: "783bfd9ae441d1d0519b979ac68b73ddd6e81df0"
+    source_sha256: "bb5323f58cd2f379cb11c39893336e49980fe2e9fb101745addd87cebde3d13d"
+    tier: core
+    depends_on: [hyprutils, hyprwayland-scanner]
+  hyprtoolkit:
+    upstream: https://github.com/hyprwm/hyprtoolkit
+    version: "0.5.4"
+    source_commit: "795d06e76434a951855762104f2b0c8c3842e052"
+    source_sha256: "2fb59789f231c1c4e9154ceffc1e7524c0cae154807c0d57e6166806255b570f"
+    tier: core
+    depends_on:
+      - aquamarine
+      - hyprgraphics
+      - hyprlang
+      - hyprutils
+      - hyprwayland-scanner
+  hyprland:
+    upstream: https://github.com/hyprwm/Hyprland
+    version: "0.56.2"
+    source_commit: "efb50993780079460b0cbed1363e2166a2de1d9f"
+    source_sha256: "ddeb92a654fa65d41ed2add3176de4fe54eab3752441c33ca99f5e598e0571e5"
+    tier: core
+    depends_on:
+      - aquamarine
+      - glaze
+      - hyprcursor
+      - hyprgraphics
+      - hyprland-protocols
+      - hyprlang
+      - hyprutils
+      - hyprwayland-scanner
+      - hyprwire
+      - lua55
+  hyprland-plugins:
+    upstream: https://github.com/hyprwm/hyprland-plugins
+    version: "0.56.0"
+    source_commit: "7644cecdb947060682891a0db2a0cdc5c0b9e704"
+    source_sha256: "9520567c1ba01add35b008db4160c6b9bba09fa65a16c09aa4fd71bca692e525"
+    tier: core
+    depends_on: [hyprland]
+  xdg-desktop-portal-hyprland:
+    upstream: https://github.com/hyprwm/xdg-desktop-portal-hyprland
+    version: "1.4.1"
+    source_commit: "cc8e5ef8fb2acef3db488b9a33b0c48c2a4ee204"
+    source_sha256: "3652c14f63a9666acea2c841e196782dbc0f74ea5b4783622dd04a32f08b709f"
+    tier: application
+    depends_on:
+      - hyprland-protocols
+      - hyprlang
+      - hyprutils
+      - hyprwayland-scanner
+  hypridle:
+    upstream: https://github.com/hyprwm/hypridle
+    version: "0.1.8"
+    source_commit: "e5c01af0842bd66617f7004568df9406111d6e80"
+    source_sha256: "08703613cc33cc796c2179bcaa6076e8618113f67b938daaf7535f90c7d39595"
+    tier: application
+    depends_on: [hyprland-protocols, hyprlang, hyprutils, hyprwayland-scanner]
+  hyprlock:
+    upstream: https://github.com/hyprwm/hyprlock
+    version: "0.9.6"
+    source_commit: "b222d9b1f87e980cac379371df57913a53b99d7f"
+    source_sha256: "7f653b87765bcfff7c1f8e04af326a7e73bbcacd1fb7d4436f6a16624a2247bb"
+    tier: application
+    depends_on: [hyprgraphics, hyprlang, hyprutils, hyprwayland-scanner]
+  hyprpaper:
+    upstream: https://github.com/hyprwm/hyprpaper
+    version: "0.8.4"
+    source_commit: "20fc0fa6c2056c388a4cd69cb394a9f989dd27c0"
+    source_sha256: "4912c7aede303918f38a3fc6b294429e2d541b639ebba67bcab58d1d367ea360"
+    tier: application
+    depends_on: [hyprlang, hyprtoolkit, hyprutils, hyprwayland-scanner, hyprwire]
+  hyprpicker:
+    upstream: https://github.com/hyprwm/hyprpicker
+    version: "0.4.7"
+    source_commit: "8c163ce9b8a40f85babe4dd6e23a238787351164"
+    source_sha256: "cde02b92abe372187c9d59a7cb2ca07ede5c3e1a8c81ed8b209dc0d3ac5f0339"
+    tier: application
+    depends_on: [hyprutils, hyprwayland-scanner]
+  hyprsunset:
+    upstream: https://github.com/hyprwm/hyprsunset
+    version: "0.4.0"
+    source_commit: "25f704346ec22e7623b0873ef8c4573b57ca1512"
+    source_sha256: "5980e65ec650010e36c52e5f5acc0df9fd2d20051c63b89305bdc13276f237a6"
+    tier: application
+    depends_on: [hyprland-protocols, hyprlang, hyprutils, hyprwayland-scanner]
+  hyprpolkitagent:
+    upstream: https://github.com/hyprwm/hyprpolkitagent
+    version: "0.1.3"
+    source_commit: "7e4054410f6d6331b239fea1c659ad6a917fbf6a"
+    source_sha256: "a8fa714b92d47331f056b608cb731dd1f5cc3845a9109cb22c6e6eb55b4eac84"
+    tier: application
+    depends_on: [hyprutils]
+  hyprland-qt-support:
+    upstream: https://github.com/hyprwm/hyprland-qt-support
+    version: "0.1.0"
+    source_commit: "9d4437011b4f02e60e98a3e36c7fa14bb053b502"
+    source_sha256: "cac1f980bd088b890097f3f999cfdf03e73ee94c53f3c92d0b3bc23baa9e7b2c"
+    tier: application
+    depends_on: [hyprlang]
+  hyprqt6engine:
+    upstream: https://github.com/hyprwm/hyprqt6engine
+    version: "0.1.0"
+    source_commit: "e8a694d5fc7813cf477f426dce731967e4cf670b"
+    source_sha256: "e52692168faa51a53e6f05c12114e79ead76787045668c65d41225a13a318f62"
+    tier: application
+    depends_on: [hyprlang, hyprutils]
+  hyprland-guiutils:
+    upstream: https://github.com/hyprwm/hyprland-guiutils
+    version: "0.2.2"
+    source_commit: "a16ad89ed5fb4192c966018a80c652de8d96f748"
+    source_sha256: "16f92a6c5a22ac58e1fc313f6b202c188da45e804e1f21ff57dfd0da5c1a01b7"
+    tier: application
+    depends_on: [hyprlang, hyprtoolkit, hyprutils]
+  hyprlauncher:
+    upstream: https://github.com/hyprwm/hyprlauncher
+    version: "0.1.6"
+    source_commit: "c682906a0836447c27c8d974f35493d3baa79d64"
+    source_sha256: "f02f93584e1017d7a466d0cafed910f630be39eba6b433922e645c834c4abf59"
+    tier: application
+    depends_on: [hyprlang, hyprtoolkit, hyprutils, hyprwire]
+  hyprpwcenter:
+    upstream: https://github.com/hyprwm/hyprpwcenter
+    version: "0.1.2"
+    source_commit: "2ce8f3d174f2ae1c50c7dcc182d809a5ab33cad2"
+    source_sha256: "ab4cfd4710566b07e98973d6723c24802d95774aa9c02aca839ff03e3bf09659"
+    tier: application
+    depends_on: [hyprtoolkit, hyprutils]
+  hyprshutdown:
+    upstream: https://github.com/hyprwm/hyprshutdown
+    version: "0.1.1"
+    source_commit: "db1f38b03b173984ae9ed3abeb9750583c9bbd91"
+    source_sha256: "32adb385b7bfe22398d45cd5325416bf0ac3ae4a5bd89678353dae96f92ba638"
+    tier: application
+    depends_on: [glaze, hyprtoolkit, hyprutils]
+  hyprsysteminfo:
+    upstream: https://github.com/hyprwm/hyprsysteminfo
+    version: "0.2.0"
+    source_commit: "6f68a726531b53d87c6dd6ce474face27dde02ff"
+    source_sha256: "4f875e7e986deeda35c05090b59f11f3b5802cac8863dafcc6e8251ea37530b1"
+    tier: application
+    depends_on: [glaze, hyprtoolkit, hyprutils]

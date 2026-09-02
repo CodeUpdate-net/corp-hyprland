@@ -16,6 +16,7 @@ from repository_check import check_repository  # noqa: E402
 CHECKSUM_A = "a" * 64
 CHECKSUM_B = "b" * 64
 CHECKSUM_C = "c" * 64
+COMMIT_A = "1" * 40
 
 
 def manifest(packages: str = "{}") -> str:
@@ -38,6 +39,7 @@ def package(
             {name}:
               upstream: https://github.com/hyprwm/{name}
               version: "1.2.3"
+              source_commit: "{COMMIT_A}"
               source_sha256: "{checksum}"
               tier: {tier}
               depends_on: {dependencies}
@@ -105,6 +107,12 @@ class ParseManifestTests(unittest.TestCase):
         with self.assertRaisesRegex(ManifestError, "64 lowercase hex digits"):
             parse_manifest(manifest(packages))
 
+    def test_bad_source_commit_is_rejected(self) -> None:
+        packages = "\n" + package("hyprutils", CHECKSUM_A)
+        text = manifest(packages).replace(COMMIT_A, "unsigned-tag")
+        with self.assertRaisesRegex(ManifestError, "40 lowercase hex digits"):
+            parse_manifest(text)
+
     def test_placeholder_version_is_rejected(self) -> None:
         text = manifest("{}").replace(
             "packages: {}",
@@ -114,6 +122,7 @@ class ParseManifestTests(unittest.TestCase):
                   hyprutils:
                     upstream: https://github.com/hyprwm/hyprutils
                     version: TBD
+                    source_commit: "{COMMIT_A}"
                     source_sha256: "{CHECKSUM_A}"
                     tier: core
                     depends_on: []
@@ -148,12 +157,16 @@ class ParseManifestTests(unittest.TestCase):
 
 class RepositoryCheckTests(unittest.TestCase):
     def _write_package(
-        self, root: Path, *, checksum: str = CHECKSUM_A, build_line: str = "%meson"
+        self,
+        root: Path,
+        *,
+        checksum: str = CHECKSUM_A,
+        build_line: str = "%meson",
+        source0: str = "%{url}/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz",
     ) -> None:
         build_lines = build_line.replace("\n", "\n                ")
         directory = root / "packages" / "hyprutils"
         directory.mkdir(parents=True)
-        (directory / "README.md").write_text("# Notes\n", encoding="utf-8")
         (directory / "sources").write_text(
             f"{checksum}  hyprutils-1.2.3.tar.gz\n", encoding="utf-8"
         )
@@ -166,7 +179,7 @@ class RepositoryCheckTests(unittest.TestCase):
                 Summary: Test
                 License: BSD-3-Clause
                 URL: https://github.com/hyprwm/hyprutils
-                Source0: %{{url}}/archive/v%{{version}}.tar.gz#/%{{name}}-%{{version}}.tar.gz
+                Source0: {source0}
 
                 %description
                 Test package.
@@ -209,6 +222,23 @@ class RepositoryCheckTests(unittest.TestCase):
                 root, build_line="%meson\n%meson_build\ncurl https://example.invalid/source"
             )
             with self.assertRaisesRegex(ManifestError, "network command in %build"):
+                check_repository(root, self._parsed_manifest())
+
+    def test_source_host_mismatch_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self._write_package(
+                root,
+                source0="https://example.invalid/hyprutils-1.2.3.tar.gz",
+            )
+            with self.assertRaisesRegex(ManifestError, "Source0 host"):
+                check_repository(root, self._parsed_manifest())
+
+    def test_privileged_scriptlet_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self._write_package(root, build_line="%meson\n%post\necho unsafe")
+            with self.assertRaisesRegex(ManifestError, "privileged RPM scriptlet"):
                 check_repository(root, self._parsed_manifest())
 
     def test_unlisted_package_directory_is_rejected(self) -> None:

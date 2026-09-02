@@ -1,0 +1,22 @@
+From 7b735036ee597635526138534ead7f4015bdd428 Mon Sep 17 00:00:00 2001
+From: COPR Maintainer <noreply@example.invalid>
+Date: Tue, 1 Sep 2026 00:00:00 +0000
+Subject: [PATCH] Explicitly find the Qt 6 GuiPrivate component
+
+Qt 6.11 no longer exposes Qt6::GuiPrivate as a side effect of loading
+BuildInternals.  The platform theme links to that target directly, so load its
+package explicitly.
+---
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4a446f0..d4d706a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -11,4 +11,5 @@
+ find_package(Qt6 6.9 CONFIG REQUIRED COMPONENTS BuildInternals Core Widgets)
++find_package(Qt6GuiPrivate 6.9 CONFIG REQUIRED)
+ find_package(PkgConfig REQUIRED)
+ find_package(KF6Config)
+ find_package(KF6ColorScheme)

@@ -20,10 +20,11 @@ PACKAGE_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9+.-]*$")
 RELEASE_SET_RE = re.compile(r"^\d{4}-\d{2}-\d{2}\.[1-9]\d*$")
 VERSION_RE = re.compile(r"^[0-9][0-9A-Za-z._+~^]*$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
 KNOWN_TIERS = frozenset({"core", "application", "compatibility"})
 ROOT_FIELDS = frozenset({"schema", "release_set", "packages"})
 PACKAGE_FIELDS = frozenset(
-    {"upstream", "version", "source_sha256", "tier", "depends_on"}
+    {"upstream", "version", "source_commit", "source_sha256", "tier", "depends_on"}
 )
 
 
@@ -63,6 +64,7 @@ class Package:
     name: str
     upstream: str
     version: str
+    source_commit: str
     source_sha256: str
     tier: str
     depends_on: tuple[str, ...]
@@ -153,6 +155,10 @@ def _validate_package(name: Any, value: Any) -> Package:
     if not isinstance(checksum, str) or not SHA256_RE.fullmatch(checksum):
         raise ManifestError(f"{location}.source_sha256 must be 64 lowercase hex digits")
 
+    commit = data["source_commit"]
+    if not isinstance(commit, str) or not COMMIT_RE.fullmatch(commit):
+        raise ManifestError(f"{location}.source_commit must be 40 lowercase hex digits")
+
     tier = data["tier"]
     if not isinstance(tier, str) or tier not in KNOWN_TIERS:
         choices = ", ".join(sorted(KNOWN_TIERS))
@@ -172,6 +178,7 @@ def _validate_package(name: Any, value: Any) -> Package:
         name=name,
         upstream=_validate_upstream(data["upstream"], f"{location}.upstream"),
         version=version,
+        source_commit=commit,
         source_sha256=checksum,
         tier=tier,
         depends_on=tuple(dependencies),

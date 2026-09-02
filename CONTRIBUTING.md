@@ -8,7 +8,7 @@ increases the supported ABI and upgrade surface.
 
 Every package change must:
 
-- satisfy the inclusion test in [`docs/package-scope.md`](docs/package-scope.md);
+- be required by the focused Hyprland stack rather than general desktop setup;
 - use an immutable HTTPS source with a SHA-256 checksum;
 - record the origin and license of specs, patches, and other imported files;
 - avoid network access during RPM build stages;

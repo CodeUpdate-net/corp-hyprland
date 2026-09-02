@@ -24,6 +24,7 @@
       "required": [
         "upstream",
         "version",
+        "source_commit",
         "source_sha256",
         "tier",
         "depends_on"
@@ -36,6 +37,10 @@
         "version": {
           "type": "string",
           "pattern": "^[0-9][0-9A-Za-z._+~^]*$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
         },
         "source_sha256": {
           "type": "string",

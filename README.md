@@ -4,10 +4,6 @@ This repository is the packaging source for a focused Fedora COPR containing
 stable Hyprland releases, first-party Hyprland applications, and only the
 dependency overlay required to keep that stack compatible.
 
-Implementation is in its bootstrap phase. No public COPR or installable
-package set is available yet. The design and operating policy live in
-[`docs/README.md`](docs/README.md).
-
 ## Developer quick start
 
 The validation tools require Python 3.11 or newer and PyYAML 6.

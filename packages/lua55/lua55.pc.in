@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=@LIBDIR@
+includedir=${prefix}/include/lua5.5
+
+Name: Lua 5.5
+Description: Embeddable scripting language, parallel 5.5 runtime
+Version: @VERSION@
+Libs: -L${libdir} -llua5.5 -lm -ldl
+Cflags: -I${includedir}

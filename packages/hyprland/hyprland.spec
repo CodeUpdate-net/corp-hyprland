@@ -1,6 +1,6 @@
 Name:           hyprland
 Version:        0.56.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Dynamic tiling Wayland compositor
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/Hyprland
@@ -65,6 +65,8 @@ extensive configuration support.
 %package devel
 Summary:        Development files for Hyprland plugins
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       glslang-devel
+Requires:       pkgconfig(libeis-1.0)
 
 %description devel
 Headers and pkg-config metadata for building Hyprland plugins.
@@ -86,10 +88,10 @@ export GIT_TAG=v%{version}
 %install
 %cmake_install
 %if 0%{?fedora} < 45
-sed -i '/^Requires:/ s/$/, lua55 >= 5.5/' \
+sed -i '/^Requires:/ s/$/, libeis-1.0, lua55 >= 5.5/' \
   %{buildroot}%{_datadir}/pkgconfig/hyprland.pc
 %else
-sed -i '/^Requires:/ s/$/, lua >= 5.5/' \
+sed -i '/^Requires:/ s/$/, libeis-1.0, lua >= 5.5/' \
   %{buildroot}%{_datadir}/pkgconfig/hyprland.pc
 %endif
 
@@ -118,5 +120,8 @@ sed -i '/^Requires:/ s/$/, lua >= 5.5/' \
 %{_datadir}/pkgconfig/hyprland.pc
 
 %changelog
+* Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-2
+- Complete development dependencies exposed by plugin headers
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-1
 - Initial package

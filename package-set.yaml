@@ -1,5 +1,5 @@
 schema: 1
-release_set: "2026-09-01.5"
+release_set: "2026-09-01.6"
 
 packages:
   glaze:
@@ -15,6 +15,13 @@ packages:
     source_commit: "a5522f06d2679b8f18534fd6a9968f7eb539dc31"
     source_sha256: "a33484f7ce4c14e12ea4d51cc5a7353bff2796a8074004b96ae2dc246f33f16e"
     tier: compatibility
+    depends_on: []
+  uwsm:
+    upstream: https://github.com/Vladimir-csp/uwsm
+    version: "0.26.7"
+    source_commit: "ab5ec16d96ed1f77c3c7ff2e3f07ed42caf23f2d"
+    source_sha256: "5cb20f1a3562787a61f4aba7f4357369a72cd7ccec2ce4752048bea018b5aa71"
+    tier: core
     depends_on: []
   hyprland-protocols:
     upstream: https://github.com/hyprwm/hyprland-protocols
@@ -101,6 +108,7 @@ packages:
       - hyprwayland-scanner
       - hyprwire
       - lua55
+      - uwsm
   hyprland-plugins:
     upstream: https://github.com/hyprwm/hyprland-plugins
     version: "0.56.0"

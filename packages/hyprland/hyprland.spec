@@ -1,6 +1,6 @@
 Name:           hyprland
 Version:        0.56.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Dynamic tiling Wayland compositor
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/Hyprland
@@ -56,6 +56,7 @@ BuildRequires:  pkgconfig(xkbcommon) >= 1.11
 BuildRequires:  hyprwayland-scanner-devel >= 0.3.10
 BuildRequires:  systemd-rpm-macros
 Requires:       xorg-x11-server-Xwayland
+Recommends:     uwsm >= 0.26.7
 Recommends:     xdg-desktop-portal-hyprland
 
 %description
@@ -80,7 +81,7 @@ export GIT_TAG=v%{version}
 %cmake \
   -DCMAKE_BUILD_TYPE=Release \
   -DFETCHCONTENT_FULLY_DISCONNECTED=ON \
-  -DNO_UWSM=ON \
+  -DNO_UWSM=OFF \
   -DUSE_TRACY=OFF \
   -DWITH_TESTS=OFF
 %cmake_build
@@ -108,6 +109,7 @@ sed -i '/^Requires:/ s/$/, libeis-1.0, lua >= 5.5/' \
 %{_datadir}/fish/vendor_completions.d/hyprctl.fish
 %{_datadir}/fish/vendor_completions.d/hyprpm.fish
 %{_datadir}/hypr/
+%{_datadir}/wayland-sessions/hyprland-uwsm.desktop
 %{_datadir}/wayland-sessions/hyprland.desktop
 %{_datadir}/xdg-desktop-portal/hyprland-portals.conf
 %{_datadir}/zsh/site-functions/_hyprctl
@@ -120,6 +122,9 @@ sed -i '/^Requires:/ s/$/, libeis-1.0, lua >= 5.5/' \
 %{_datadir}/pkgconfig/hyprland.pc
 
 %changelog
+* Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-3
+- Enable the optional UWSM-managed display-manager session
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-2
 - Complete development dependencies exposed by plugin headers
 

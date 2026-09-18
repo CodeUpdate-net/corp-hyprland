@@ -1,6 +1,6 @@
 Name:           hypridle
 Version:        0.1.8
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Hyprland idle management daemon
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hypridle
@@ -39,5 +39,8 @@ Hypridle is Hyprland's configurable idle management daemon.
 %{_userunitdir}/hypridle.service
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.1.8-2
+- Rebuild against hyprland-protocols 0.7.1
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.1.8-1
 - Initial package

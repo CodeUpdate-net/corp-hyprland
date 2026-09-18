@@ -1,5 +1,5 @@
 Name:           uwsm
-Version:        0.26.7
+Version:        0.27.0
 Release:        1%{?dist}
 Summary:        Universal Wayland Session Manager
 License:        MIT
@@ -103,5 +103,8 @@ find %{buildroot}%{_libexecdir}/uwsm %{buildroot}%{_datadir}/uwsm/plugins \
 %{_mandir}/man3/uwsm-plugins.3*
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.27.0-1
+- Update to 0.27.0
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.26.7-1
 - Initial package

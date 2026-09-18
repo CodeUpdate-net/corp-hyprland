@@ -1,6 +1,6 @@
 Name:           hyprpaper
 Version:        0.8.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Wayland wallpaper utility for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprpaper
@@ -41,6 +41,9 @@ Hyprpaper is a fast wallpaper utility with per-output support.
 %{_userunitdir}/hyprpaper.service
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.8.4-3
+- Rebuild against hyprtoolkit 0.6.0 (SOVERSION 5 -> 6)
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.8.4-2
 - Add the Wayland protocols needed by the source scanner
 

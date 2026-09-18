@@ -1,6 +1,6 @@
 Name:           hyprsunset
 Version:        0.4.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Blue-light filter for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprsunset
@@ -37,5 +37,8 @@ Hyprsunset adjusts display color temperature using Hyprland protocols.
 %{_userunitdir}/hyprsunset.service
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.4.0-2
+- Rebuild against hyprland-protocols 0.7.1
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.4.0-1
 - Initial package

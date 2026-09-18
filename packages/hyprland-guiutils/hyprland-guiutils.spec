@@ -1,6 +1,6 @@
 Name:           hyprland-guiutils
 Version:        0.2.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Graphical utilities for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprland-guiutils
@@ -42,6 +42,9 @@ Dialog, welcome, update, donation, and command-running utilities for Hyprland.
 %{_bindir}/hyprland-welcome
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.2.2-3
+- Rebuild against hyprtoolkit 0.6.0 (SOVERSION 5 -> 6)
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.2.2-2
 - Require xdg-open for the support, news, and wiki buttons
 

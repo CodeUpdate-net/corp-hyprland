@@ -1,5 +1,5 @@
 Name:           lua55
-Version:        5.5.0
+Version:        5.5.1
 Release:        1%{?dist}
 Summary:        Parallel-installable Lua 5.5 runtime for Hyprland
 License:        MIT
@@ -70,5 +70,8 @@ sed -e 's|@LIBDIR@|%{_libdir}|g' \
 %{_libdir}/pkgconfig/lua55.pc
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 5.5.1-1
+- Update to Lua 5.5.1
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 5.5.0-1
 - Add a parallel Lua 5.5 runtime for Fedora 44

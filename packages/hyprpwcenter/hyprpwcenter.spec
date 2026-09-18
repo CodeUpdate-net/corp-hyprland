@@ -1,6 +1,6 @@
 Name:           hyprpwcenter
 Version:        0.1.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        PipeWire control center for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprpwcenter
@@ -35,5 +35,8 @@ Hyprpwcenter is a graphical PipeWire volume and device control center.
 %{_datadir}/applications/hyprpwcenter.desktop
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.1.2-2
+- Rebuild against hyprtoolkit 0.6.0 (SOVERSION 5 -> 6)
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.1.2-1
 - Initial package

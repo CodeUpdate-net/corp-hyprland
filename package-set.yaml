@@ -1,9 +1,11 @@
 schema: 1
-release_set: "2026-09-01.8"
+release_set: "2026-09-18.1"
 
 packages:
   glaze:
     upstream: https://github.com/stephenberry/glaze
+    # Held on 7.x: Hyprland 0.56.2 requires find_package(glaze 7...<8) and
+    # falls back to a networked FetchContent when no in-range glaze is found.
     version: "7.2.0"
     source_commit: "b518eec7a22e56ffa238b072c07f47efa7cea97f"
     source_sha256: "17dba19ae63ae48f94994f00d49d5cb3c8f1306db1046c534c4828662490b7d4"
@@ -11,16 +13,16 @@ packages:
     depends_on: []
   lua55:
     upstream: https://github.com/lua/lua
-    version: "5.5.0"
-    source_commit: "a5522f06d2679b8f18534fd6a9968f7eb539dc31"
-    source_sha256: "a33484f7ce4c14e12ea4d51cc5a7353bff2796a8074004b96ae2dc246f33f16e"
+    version: "5.5.1"
+    source_commit: "7579fc9d7ed90240487251dfb69168f8e64e9294"
+    source_sha256: "ffed0b0e2987e66b0142491b26c63170ffd2d86e425ff3703799f4933fd91810"
     tier: compatibility
     depends_on: []
   uwsm:
     upstream: https://github.com/Vladimir-csp/uwsm
-    version: "0.26.7"
-    source_commit: "ab5ec16d96ed1f77c3c7ff2e3f07ed42caf23f2d"
-    source_sha256: "5cb20f1a3562787a61f4aba7f4357369a72cd7ccec2ce4752048bea018b5aa71"
+    version: "0.27.0"
+    source_commit: "f82dece2cedf308c897513f093f45025fbfdda4f"
+    source_sha256: "58cfb93773d2286a875c249ee4c8c59f71029c8f91c55e5f0fe50ca65c6f2e13"
     tier: core
     depends_on: []
   hyprshot:
@@ -32,9 +34,9 @@ packages:
     depends_on: [hyprland]
   hyprland-protocols:
     upstream: https://github.com/hyprwm/hyprland-protocols
-    version: "0.7.0"
-    source_commit: "bd153e76f751f150a09328dbdeb5e4fab9d23622"
-    source_sha256: "ee419006d7cd20927b9b7c8b5fc430571c151b0385d600508de1a7957294498c"
+    version: "0.7.1"
+    source_commit: "cc9a8fd253bdc00f48a967ecf4828211ef08751f"
+    source_sha256: "178fa406a1c76e94efeed5d1488abd6029427865f6fd4caf296c71ffaf0d069e"
     tier: core
     depends_on: []
   hyprwayland-scanner:
@@ -46,9 +48,9 @@ packages:
     depends_on: []
   hyprutils:
     upstream: https://github.com/hyprwm/hyprutils
-    version: "0.14.1"
-    source_commit: "2db328fe2b3e8b6a2eee5d17a91ff1ca4177719f"
-    source_sha256: "e8cfb093d8124de1e63d3635b7d749758d0919c2e1b3ce44462ef7ab003060c4"
+    version: "0.14.2"
+    source_commit: "a21e87b878e72ee5dfd375899e8b2ad0d0c4c0e1"
+    source_sha256: "2061b7b08c8104fb02a609553b28f6c8580e5ec38633015845f1c4553980175b"
     tier: core
     depends_on: []
   hyprlang:
@@ -81,16 +83,16 @@ packages:
     depends_on: [hyprutils]
   aquamarine:
     upstream: https://github.com/hyprwm/aquamarine
-    version: "0.15.0"
-    source_commit: "783bfd9ae441d1d0519b979ac68b73ddd6e81df0"
-    source_sha256: "bb5323f58cd2f379cb11c39893336e49980fe2e9fb101745addd87cebde3d13d"
+    version: "0.15.1"
+    source_commit: "f31c47a1b9d300847d8fc3108ad959448103dfc1"
+    source_sha256: "2f9de98c0bd1b7b1b09c576e390a2fef436449762fb334163c414f0c300296f2"
     tier: core
     depends_on: [hyprutils, hyprwayland-scanner]
   hyprtoolkit:
     upstream: https://github.com/hyprwm/hyprtoolkit
-    version: "0.5.4"
-    source_commit: "795d06e76434a951855762104f2b0c8c3842e052"
-    source_sha256: "2fb59789f231c1c4e9154ceffc1e7524c0cae154807c0d57e6166806255b570f"
+    version: "0.6.0"
+    source_commit: "f8cbaf42e1f7fdc9c7565d7be3e935f6d56c7a39"
+    source_sha256: "53c41be72af97d9ede274a63c9c1034c58726d862905763ed6e5a564ae42ba6b"
     tier: core
     depends_on:
       - aquamarine
@@ -171,11 +173,11 @@ packages:
     depends_on: [hyprland-protocols, hyprlang, hyprutils, hyprwayland-scanner]
   hyprpolkitagent:
     upstream: https://github.com/hyprwm/hyprpolkitagent
-    version: "0.1.3"
-    source_commit: "7e4054410f6d6331b239fea1c659ad6a917fbf6a"
-    source_sha256: "a8fa714b92d47331f056b608cb731dd1f5cc3845a9109cb22c6e6eb55b4eac84"
+    version: "0.2.0"
+    source_commit: "0e4492994e211b9af9365f16a9fda35d32e106bb"
+    source_sha256: "dcb1147e28efe03f308513f9dad69ab54e3cb9eca38795c4498d968b4f5ec602"
     tier: application
-    depends_on: [hyprutils]
+    depends_on: [hyprgraphics, hyprlang, hyprtoolkit, hyprutils]
   hyprland-qt-support:
     upstream: https://github.com/hyprwm/hyprland-qt-support
     version: "0.1.0"

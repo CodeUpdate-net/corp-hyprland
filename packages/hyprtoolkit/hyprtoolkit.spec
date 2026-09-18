@@ -1,6 +1,6 @@
 Name:           hyprtoolkit
-Version:        0.5.4
-Release:        3%{?dist}
+Version:        0.6.0
+Release:        1%{?dist}
 Summary:        Hyprland graphical user interface toolkit
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprtoolkit
@@ -10,13 +10,14 @@ ExcludeArch:    %{ix86}
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  hyprwayland-scanner-devel >= 0.4.0
+BuildRequires:  pkgconfig(absl_flat_hash_map)
 BuildRequires:  pkgconfig(aquamarine) >= 0.10.0
 BuildRequires:  pkgconfig(cairo)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(hyprgraphics) >= 0.3.0
 BuildRequires:  pkgconfig(hyprlang) >= 0.6.0
-BuildRequires:  pkgconfig(hyprutils) >= 0.11.0
+BuildRequires:  pkgconfig(hyprutils) >= 0.14.2
 BuildRequires:  pkgconfig(iniparser)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(pango)
@@ -34,7 +35,7 @@ Summary:        Development files for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       pkgconfig(aquamarine) >= 0.10.0
 Requires:       pkgconfig(hyprgraphics) >= 0.3.0
-Requires:       pkgconfig(hyprutils) >= 0.11.0
+Requires:       pkgconfig(hyprutils) >= 0.14.2
 
 %description devel
 Headers and pkg-config metadata for developing against %{name}.
@@ -48,8 +49,6 @@ Headers and pkg-config metadata for developing against %{name}.
 
 %install
 %cmake_install
-sed -i '/^Version:/a Requires: aquamarine >= 0.10.0, hyprgraphics >= 0.3.0, hyprutils >= 0.11.0' \
-  %{buildroot}%{_libdir}/pkgconfig/hyprtoolkit.pc
 
 %files
 %license LICENSE
@@ -62,6 +61,11 @@ sed -i '/^Version:/a Requires: aquamarine >= 0.10.0, hyprgraphics >= 0.3.0, hypr
 %{_libdir}/pkgconfig/hyprtoolkit.pc
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.6.0-1
+- Update to 0.6.0 (SOVERSION 5 -> 6; use-after-free, image race, and textbox password-masking fixes)
+- Require hyprutils >= 0.14.2 and abseil, as upstream now does
+- Drop the pkg-config Requires patch; upstream emits Requires and Requires.private itself
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.5.4-3
 - Propagate public-header dependencies through pkg-config
 

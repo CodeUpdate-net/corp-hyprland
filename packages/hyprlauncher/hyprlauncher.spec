@@ -1,6 +1,6 @@
 Name:           hyprlauncher
 Version:        0.1.6
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Application launcher for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprlauncher
@@ -39,6 +39,9 @@ Hyprlauncher is a multipurpose application launcher and picker for Hyprland.
 %{_bindir}/hyprlauncher
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.1.6-3
+- Rebuild against hyprtoolkit 0.6.0 (SOVERSION 5 -> 6)
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.1.6-2
 - Add the XKB headers used directly by the launcher
 

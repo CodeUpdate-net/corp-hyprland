@@ -1,6 +1,6 @@
 Name:           hyprland-plugins
 Version:        0.56.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Official plugins for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprland-plugins
@@ -43,5 +43,8 @@ Official borders, window-bar, focus, and compatibility plugins for Hyprland.
 %{_libdir}/libhyprfocus.so
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.56.0-2
+- Rebuild against Hyprland 0.56.2-4
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.56.0-1
 - Initial package

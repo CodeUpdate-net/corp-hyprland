@@ -1,6 +1,6 @@
 Name:           aquamarine
-Version:        0.15.0
-Release:        2%{?dist}
+Version:        0.15.1
+Release:        1%{?dist}
 Summary:        Lightweight Linux rendering backend library
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/aquamarine
@@ -59,6 +59,9 @@ sed -i '/^Version:/a Requires: hyprutils >= 0.8.0, libdrm, wayland-client' \
 %{_libdir}/pkgconfig/aquamarine.pc
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.15.1-1
+- Update to 0.15.1 (DRM use-after-free and libinput resume fixes; SOVERSION stays 14)
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.15.0-2
 - Add development dependencies exposed by public headers
 

@@ -1,6 +1,6 @@
 Name:           hyprutils
-Version:        0.14.1
-Release:        2%{?dist}
+Version:        0.14.2
+Release:        1%{?dist}
 Summary:        Hyprland utility library
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprutils
@@ -45,6 +45,9 @@ sed -i '/^Version:/a Requires: pixman-1' \
 %{_libdir}/pkgconfig/hyprutils.pc
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.14.2-1
+- Update to 0.14.2 (adds the new event loop; SOVERSION stays 13)
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.14.1-2
 - Add development dependency exposed by public headers
 

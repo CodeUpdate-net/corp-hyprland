@@ -1,5 +1,5 @@
 Name:           hyprland-protocols
-Version:        0.7.0
+Version:        0.7.1
 Release:        1%{?dist}
 Summary:        Wayland protocol extensions for Hyprland
 
@@ -41,5 +41,8 @@ Hyprland-specific Wayland protocols.
 %{_datadir}/pkgconfig/hyprland-protocols.pc
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.7.1-1
+- Update to 0.7.1 (input-capture-v1 session destructor)
+
 * Tue Sep 01 2026 Hyprland COPR maintainers - 0.7.0-1
 - Initial package for the coherent Hyprland stack

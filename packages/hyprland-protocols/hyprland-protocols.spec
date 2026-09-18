@@ -8,7 +8,7 @@ URL:            https://github.com/hyprwm/hyprland-protocols
 Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
 
 BuildArch:      noarch
-BuildRequires:  meson
+BuildRequires:  cmake
 
 %description
 Wayland protocol extensions used by Hyprland and applications integrating
@@ -25,14 +25,11 @@ Hyprland-specific Wayland protocols.
 %autosetup
 
 %build
-%meson
-%meson_build
+%cmake
+%cmake_build
 
 %install
-%meson_install
-
-%check
-%meson_test
+%cmake_install
 
 %files devel
 %license LICENSE
@@ -43,6 +40,10 @@ Hyprland-specific Wayland protocols.
 %changelog
 * Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.7.1-1
 - Update to 0.7.1 (input-capture-v1 session destructor)
+- Switch to CMake; 0.7.1 drops meson.build. The installed layout is
+  unchanged, so consumers still read the XML from
+  %%{_datadir}/hyprland-protocols/protocols
+- Drop %%check; the CMake port ships no test suite
 
 * Tue Sep 01 2026 Hyprland COPR maintainers - 0.7.0-1
 - Initial package for the coherent Hyprland stack

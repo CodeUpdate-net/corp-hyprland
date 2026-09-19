@@ -3,9 +3,10 @@
 Review started 2026-09-18; final results verified 2026-09-19.
 
 Baseline reviewed: Git commit `5617928d23b405474454756774e1169594e7f8cc`,
-release set `2026-09-18.1`. The working-tree fixes described below are not yet
-committed, submitted to COPR or published. This record distinguishes the public
-release from local candidate validation.
+release set `2026-09-18.1`. At completion of the local review, the fixes were
+not yet submitted to COPR. Subsequent builds and signed-artifact tests are
+recorded in [candidate 2026-09-19.1](../releases/2026-09-19.1.json). This report
+distinguishes the public baseline from candidate validation.
 
 ## Setup verified
 
@@ -91,8 +92,9 @@ Historical baseline examples: Hyprland build 10933716, Hyprtoolkit 10933507,
 hyprutils 10933493 and hyprpolkitagent 10933345.
 
 Upgrade evidence concerns the previous-to-current **public** release. The new
-local audit-fix RPMs have passed clean builds and installs but are not yet signed
-or published through COPR.
+audit-fix RPMs subsequently passed COPR builds, signature verification and
+public-to-candidate upgrade tests on both targets. Public metadata regeneration
+remains withheld; see the candidate record for exact build IDs and state.
 
 ## Limits and required pre-publication gates
 
@@ -103,7 +105,8 @@ passed on both targets as described above.
 
 A nested/VM desktop session, actual plugin loading, GPU paths, screen-sharing,
 lock/unlock and polkit authentication were not exercised by the containers.
-A clean Mock run and complete upstream advisory review remain release gates.
+The changed packages subsequently passed COPR’s clean Mock builds; a complete
+upstream advisory review remains a release gate.
 No claim is made that all upstream source code is vulnerability-free.
 
 The GitHub security pages consulted for
@@ -114,5 +117,5 @@ showed no published advisories in the retrieved pages; some results were cached.
 The hyprcursor security page could not be retrieved. These limited checks are
 not a complete or live CVE assessment.
 
-Do not regenerate COPR metadata for these local fixes until new signed builds
-and the required release gates are reviewed. Manual publication remains enabled.
+The signed COPR builds and install tests now pass. Review the remaining
+release gates before regenerating metadata. Manual publication remains enabled.

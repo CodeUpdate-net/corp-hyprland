@@ -77,5 +77,6 @@ runtime safety. Review any new error rather than broadening these filters.
 ## Evidence and limits
 
 See [validation-2026-09-18.md](validation-2026-09-18.md) for observed checks and
-outstanding release gates. Audit fixes in this working tree require new builds
-and deliberate publication before users receive them.
+outstanding release gates. The [audit-fix candidate record](../releases/2026-09-19.1.json)
+contains its successful signed COPR builds and install tests. Deliberate
+publication remains withheld pending the remaining release gates.

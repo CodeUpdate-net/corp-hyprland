@@ -2,8 +2,8 @@
   "schema": 1,
   "release_set": "2026-09-19.1",
   "previous_release_set": "2026-09-18.1",
-  "status": "building",
-  "publication": "withheld",
+  "status": "validated_candidate",
+  "publication": "withheld; manual COPR repository regeneration has not been requested or performed",
   "project": "dtutila/hyprland",
   "source_repository": "https://github.com/CodeUpdate-net/corp-hyprland.git",
   "source_commit": "c80b5e91a32aa4322a740c62723269d532cfb93c",
@@ -27,7 +27,6 @@
     "release_id_change": "Metadata-only change after full builds; RPM inputs are unchanged."
   },
   "pending_publication_gates": [
-    "signed candidate artifact install/upgrade verification",
     "real desktop/VM session and plugin-loading tests",
     "complete upstream advisory review"
   ],
@@ -235,5 +234,87 @@
       "build_id": null,
       "inherited": true
     }
-  }
+  },
+  "copr_results": {
+    "11004546/fedora-44-x86_64": {
+      "started_on": 1789839737,
+      "ended_on": 1789839834,
+      "state": "succeeded",
+      "name": "fedora-44-x86_64",
+      "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-44-x86_64/11004546-hyprcursor/"
+    },
+    "11004546/fedora-45-x86_64": {
+      "started_on": 1789839737,
+      "ended_on": 1789839825,
+      "state": "succeeded",
+      "name": "fedora-45-x86_64",
+      "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-45-x86_64/11004546-hyprcursor/"
+    },
+    "11004547/fedora-44-x86_64": {
+      "started_on": 1789839778,
+      "ended_on": 1789839881,
+      "state": "succeeded",
+      "name": "fedora-44-x86_64",
+      "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-44-x86_64/11004547-hyprland-plugins/"
+    },
+    "11004547/fedora-45-x86_64": {
+      "started_on": 1789839778,
+      "ended_on": 1789839878,
+      "state": "succeeded",
+      "name": "fedora-45-x86_64",
+      "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-45-x86_64/11004547-hyprland-plugins/"
+    }
+  },
+  "github_ci": {
+    "commit": "125b48e04c8b934128ff0664ddd3453453a1709c",
+    "run_id": 35459018607,
+    "url": "https://github.com/CodeUpdate-net/corp-hyprland/actions/runs/35459018607",
+    "status": "passed",
+    "fix": "Point setup-python pip caching at requirements-dev.txt."
+  },
+  "signed_candidate_verification": {
+    "fedora-44-x86_64": {
+      "status": "passed",
+      "signature_checks": "rpm -K and DNF localpkg_gpgcheck=1",
+      "tests": [
+        "upgrade from public hyprcursor and hyprland-plugins release 2 to candidate release 3",
+        "dnf check",
+        "exact Hyprland RPM dependency",
+        "Hyprland and hyprcursor-util version smoke tests"
+      ],
+      "log": "results/copr-2026-09-19.1/install-44.log"
+    },
+    "fedora-45-x86_64": {
+      "status": "passed",
+      "signature_checks": "rpm -K and DNF localpkg_gpgcheck=1",
+      "tests": [
+        "upgrade from public hyprcursor and hyprland-plugins release 2 to candidate release 3",
+        "dnf check",
+        "exact Hyprland RPM dependency",
+        "Hyprland and hyprcursor-util version smoke tests"
+      ],
+      "log": "results/copr-2026-09-19.1/install-45.log"
+    }
+  },
+  "downloaded_artifacts": {
+    "hyprcursor/fedora-44-x86_64/hyprcursor-0.1.13-3.fc44.src.rpm": "31b0ca50ec7f711da47e7ca2ab1fdcf83a619ecd88cfd1c3ec75d5aabf62bde5",
+    "hyprcursor/fedora-44-x86_64/hyprcursor-0.1.13-3.fc44.x86_64.rpm": "1a122b854cdeea83160d719aa3ca94dffb297c3753b13c5ce13b7152e57f40d1",
+    "hyprcursor/fedora-44-x86_64/hyprcursor-debuginfo-0.1.13-3.fc44.x86_64.rpm": "94b5b9042a6779f9602ff6de941faa62cdc8141d9cc6832156b6329efd587f23",
+    "hyprcursor/fedora-44-x86_64/hyprcursor-debugsource-0.1.13-3.fc44.x86_64.rpm": "587138970b45410ba2979d0fc9f57dc73fbd57c4a7c8ab0bb227e94904d84a0b",
+    "hyprcursor/fedora-44-x86_64/hyprcursor-devel-0.1.13-3.fc44.x86_64.rpm": "3bc7b82f180c8c00703ddb58ef7022ec18d5977c2651b3d06c21b7deb5fd176e",
+    "hyprcursor/fedora-45-x86_64/hyprcursor-0.1.13-3.fc45.src.rpm": "d60dc1c7469a108db13ed1402e44664d3f8f4732c059ec11b4aee2c59bf8f0ff",
+    "hyprcursor/fedora-45-x86_64/hyprcursor-0.1.13-3.fc45.x86_64.rpm": "fe785db05cbca3ee5eacc596a616b93252c7aa44d5991884a30e36603c1d93a7",
+    "hyprcursor/fedora-45-x86_64/hyprcursor-debuginfo-0.1.13-3.fc45.x86_64.rpm": "d736dbc667b586819b65725957908ab0caa00e6a130184f7e28b5a6fd4b8a43f",
+    "hyprcursor/fedora-45-x86_64/hyprcursor-debugsource-0.1.13-3.fc45.x86_64.rpm": "424e76dcf531f4fb9f9a58b4eefb8a028c60c572cf82ddf83e193790567a6437",
+    "hyprcursor/fedora-45-x86_64/hyprcursor-devel-0.1.13-3.fc45.x86_64.rpm": "75f464bfb2002b9e267a41b22590d06d01a591a8b557573334855e8a9790a09f",
+    "hyprland-plugins/fedora-44-x86_64/hyprland-plugins-0.56.0-3.fc44.src.rpm": "f07e7f173b200f7fd86a083223f688d27d3bcc7b322880a9f9fe0cc1dc2843a6",
+    "hyprland-plugins/fedora-44-x86_64/hyprland-plugins-0.56.0-3.fc44.x86_64.rpm": "2450062439e6e116ef900e0892b1f2daf87143635113c9ab31f6c8a0f752147c",
+    "hyprland-plugins/fedora-44-x86_64/hyprland-plugins-debuginfo-0.56.0-3.fc44.x86_64.rpm": "03797840826aa547153ce17dc4bbbcad68a83c518db7560771ae1c7ba962ddcd",
+    "hyprland-plugins/fedora-44-x86_64/hyprland-plugins-debugsource-0.56.0-3.fc44.x86_64.rpm": "d6aa9bf132c8ec97637f774a7835adc4eea54ba936c10f70188403dfb7ee4166",
+    "hyprland-plugins/fedora-45-x86_64/hyprland-plugins-0.56.0-3.fc45.src.rpm": "26c1d9173d915ab7339e87409889dbd511537b00dcacb4b37e21e72526611ad5",
+    "hyprland-plugins/fedora-45-x86_64/hyprland-plugins-0.56.0-3.fc45.x86_64.rpm": "2d918824ff8256642166458a370b5980716cb95b277962e77c1bae1338520201",
+    "hyprland-plugins/fedora-45-x86_64/hyprland-plugins-debuginfo-0.56.0-3.fc45.x86_64.rpm": "592a78e8682b41e453f93c34ce4192d6f37c3c98f80eca437cffeba6f427e6e8",
+    "hyprland-plugins/fedora-45-x86_64/hyprland-plugins-debugsource-0.56.0-3.fc45.x86_64.rpm": "c9eced9b1ce08ab41ef02c0f4cdddca92316434cf84da71232ba8e841d1166b9"
+  },
+  "validated_on": "2026-09-19T17:49:04.614447+00:00"
 }

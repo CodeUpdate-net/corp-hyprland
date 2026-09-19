@@ -124,3 +124,14 @@ The signed COPR builds, install tests and scoped maintenance-release runtime
 checks now pass. The user authorized publication after those runtime tests.
 Manual publication remains enabled for future builds. Public publication and
 post-publication verification are recorded in `releases/2026-09-19.1.json`.
+
+
+## Publication — 2026-09-19
+
+After the user requested desktop/plugin runtime checks followed by publication,
+the nested test suites passed on both targets. COPR accepted
+`copr-cli regenerate-repos dtutila/hyprland`; fresh public installations then
+verified hyprcursor 0.1.13-3, hyprland-plugins 0.56.0-3 and the exact Hyprland
+0.56.2-4 dependency. Signature verification remained enabled and `dnf check`
+passed. Public metadata hashes and logs are recorded in the release manifest.
+The project remains in manual publishing mode with build networking disabled.

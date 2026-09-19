@@ -88,10 +88,15 @@ candidate RPMs and the existing public Hyprland 0.56.2-4. They used direct
 `Hyprland` startup for debugging, so its expected `start-hyprland` warning was
 visible; the minimal test image also lacked optional `hyprland-guiutils`.
 Hypridle reported unavailable logind inhibition, while its timed and resumed
-hooks passed. After unlock, Hyprland logged two missing color-description
-fallbacks and a lock-surface destruction warning. The pinned source returns the
+hooks passed. The full compositor logs also contain expected DRM/seat failures before
+selecting the nested Wayland backend, an absent cursor theme falling back to
+Xcursor, a missing fresh-user data directory, and no preferred nested output
+mode. Config reload/plugin changes produced stale-watch notifications.
+Hyprland logged missing color-description fallbacks during rendering and a
+lock-surface destruction warning after unlock. The pinned source returns the
 original color for that fallback; screenshots and the session remained usable.
-These diagnostics are retained in the evidence, not reported as clean logs.
+No compositor crash or plugin ABI/unresolved-symbol failure occurred. These
+diagnostics are retained in the evidence, not reported as clean logs.
 
 Publication of this two-package maintenance update uses the scoped runtime
 coverage above. Full portal/polkit, login/suspend and hardware qualification

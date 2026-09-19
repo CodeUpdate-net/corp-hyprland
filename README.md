@@ -19,9 +19,11 @@ builds verify every package in dependency order, compile without networking,
 and preserve RPMs and logs under `results/`. Python 3.11+ and PyYAML 6 are required.
 
 - [Podman build and test instructions](docs/build-and-test.md)
+- [Nested desktop and plugin runtime tests](docs/runtime-testing.md)
 - [Build, publish and rollback runbook](docs/operations.md)
 - [Current COPR configuration](docs/copr-project.md)
 - [Security audit procedure and findings](docs/security-audit.md)
+- [Security patches, regression tests and limitations](docs/security-patches.md)
 
 `package-set.yaml` pins versions, source checksums and dependency ordering.
 Manual COPR publication is enabled: successful future builds remain candidates

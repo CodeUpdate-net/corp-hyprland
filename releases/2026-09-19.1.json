@@ -2,8 +2,8 @@
   "schema": 1,
   "release_set": "2026-09-19.1",
   "previous_release_set": "2026-09-18.1",
-  "status": "validated_candidate",
-  "publication": "Authorized by the user after desktop/plugin runtime checks; regeneration pending.",
+  "status": "published",
+  "publication": "Published by copr-cli regenerate-repos dtutila/hyprland after user-authorized nested desktop/plugin tests; fresh public signed installs passed on both targets.",
   "project": "dtutila/hyprland",
   "source_repository": "https://github.com/CodeUpdate-net/corp-hyprland.git",
   "source_commit": "c80b5e91a32aa4322a740c62723269d532cfb93c",
@@ -329,8 +329,9 @@
     "Plugin-specific game/Vulkan behavior beyond load/render/unload"
   ],
   "runtime_diagnostics": [
-    "After unlock: missing color-description fallback (source returns original color) and lock-surface destruction warning; rendering/session remained usable.",
-    "Private container bus has no logind inhibition; direct debug startup and missing optional guiutils produce expected notices."
+    "Missing color-description fallbacks during rendering (pinned source returns original color), stale config-watch notifications and lock-surface destruction warning; rendering/session remained usable.",
+    "Private container bus has no logind inhibition; direct debug startup and missing optional guiutils produce expected notices.",
+    "Nested backend startup: unavailable DRM seat, no preferred output mode, absent cursor theme falls back to Xcursor, missing fresh-user data directory. No compositor crash or plugin ABI/unresolved-symbol failure observed."
   ],
   "desktop_runtime_verification": {
     "fedora-44-x86_64": {
@@ -414,6 +415,36 @@
         "wallpaper.png": "f324b903871a1e6f4a3bc32f3640522ea54e06d45cdac366f44d1fe9a7a6424f",
         "wallpaper.svg": "78d0fc43a0754f1fb550657e643070467e9230c80ec8acfd948137be5ae4bba9"
       }
+    }
+  },
+  "publication_verified_at": "2026-09-19T18:15:05.652165+00:00",
+  "manual_publication_enabled": true,
+  "post_publication_verification": {
+    "fedora-44-x86_64": {
+      "status": "passed",
+      "tests": [
+        "fresh public metadata exposes both release-3 RPMs",
+        "fresh signed public install including hyprcursor-devel",
+        "dnf check",
+        "exact plugin compositor requirement",
+        "version smoke tests"
+      ],
+      "log": "results/copr-2026-09-19.1/public-final-44.log",
+      "log_sha256": "0de8f76c19eac97da014b905b303d5bece44eded932f95967d8fa37d81d309ef",
+      "repomd_sha256": "6be13ab6d7f19c9800419e9aba2df0bf4f52f25e924fcbd7d5e325f1a13ad2bd"
+    },
+    "fedora-45-x86_64": {
+      "status": "passed",
+      "tests": [
+        "fresh public metadata exposes both release-3 RPMs",
+        "fresh signed public install including hyprcursor-devel",
+        "dnf check",
+        "exact plugin compositor requirement",
+        "version smoke tests"
+      ],
+      "log": "results/copr-2026-09-19.1/public-final-45.log",
+      "log_sha256": "769735fab6bed7d21516f880c0e40910838bf97e34676c1a6d5bc07077fa96ec",
+      "repomd_sha256": "c1d8c69071d7cf60706f598f9ddec31318f66e6872c12e469dc75728db85fd03"
     }
   }
 }

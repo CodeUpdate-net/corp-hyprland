@@ -1,6 +1,6 @@
 Name:           hyprland-plugins
 Version:        0.56.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Official plugins for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprland-plugins
@@ -9,7 +9,7 @@ Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz#/%{name}-%{version}.
 ExcludeArch:    %{ix86}
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
-BuildRequires:  hyprland-devel >= 0.56.0
+BuildRequires:  hyprland-devel = 0.56.2-4%{?dist}
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libinput)
 BuildRequires:  pkgconfig(libudev)
@@ -17,7 +17,7 @@ BuildRequires:  pkgconfig(pangocairo)
 BuildRequires:  pkgconfig(pixman-1)
 BuildRequires:  pkgconfig(wayland-server)
 BuildRequires:  pkgconfig(xkbcommon)
-Requires:       hyprland%{?_isa} >= 0.56.0
+Requires:       hyprland%{?_isa} = 0.56.2-4%{?dist}
 
 %description
 Official borders, window-bar, focus, and compatibility plugins for Hyprland.
@@ -43,6 +43,9 @@ Official borders, window-bar, focus, and compatibility plugins for Hyprland.
 %{_libdir}/libhyprfocus.so
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.56.0-3
+- Pin the compositor and headers to the exact build used by these ABI-sensitive plugins
+
 * Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.56.0-2
 - Rebuild against Hyprland 0.56.2-4
 

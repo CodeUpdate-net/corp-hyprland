@@ -1,27 +1,31 @@
 # Hyprland COPR
 
-This repository is the packaging source for a focused Fedora COPR containing
-stable Hyprland releases, first-party Hyprland applications, and only the
-dependency overlay required to keep that stack compatible.
+Packaging source for [dtutila/hyprland](https://copr.fedorainfracloud.org/coprs/dtutila/hyprland/):
+stable Hyprland, first-party applications and the dependency overlay needed to
+keep them compatible. Current targets are Fedora 44 and 45 on x86_64. aarch64 is
+not yet enabled. libsecret belongs separately in `dtutila/utils`.
 
-## Developer quick start
-
-The validation tools require Python 3.11 or newer and PyYAML 6.
+## Build and test
 
 ```bash
-python3 -m venv .venv
-.venv/bin/pip install -r requirements-dev.txt
+sudo dnf install podman python3-pyyaml
 ./scripts/check
-./scripts/render-build-order
+./scripts/build-container --fedora 44
+./scripts/build-container --fedora 45
 ```
 
-`package-set.yaml` is the source of truth for package versions and dependency
-ordering. Packages are added only after their upstream tag, source checksum,
-Fedora overlap, and provenance have been reviewed. The first prototype is
-`hyprland-protocols`.
+`check` uses Fedora in Podman when host RPM tools are missing. Full container
+builds verify every package in dependency order, compile without networking,
+and preserve RPMs and logs under `results/`. Python 3.11+ and PyYAML 6 are required.
 
-## Project status
+- [Podman build and test instructions](docs/build-and-test.md)
+- [Build, publish and rollback runbook](docs/operations.md)
+- [Current COPR configuration](docs/copr-project.md)
+- [Security audit procedure and findings](docs/security-audit.md)
 
-The COPR owner, public forge URL, contact address, and repository license still
-need owner decisions. Do not import third-party specs or patches until their
-reuse terms and per-file provenance are recorded.
+`package-set.yaml` pins versions, source checksums and dependency ordering.
+Manual COPR publication is enabled: successful future builds remain candidates
+until the operator intentionally regenerates repository metadata after testing.
+
+The repository-wide license and private security contact still need an owner
+decision. Preserve all third-party license/provenance notices.

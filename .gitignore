@@ -18,6 +18,3 @@ __pycache__/
 .idea/
 .vscode/
 *~
-
-# Local project notes
-docs/

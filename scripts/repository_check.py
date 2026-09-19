@@ -21,13 +21,13 @@ SOURCE_LINE_RE = re.compile(r"^([0-9a-f]{64})  ([^/\s][^/]*)$")
 RPM_SECTION_RE = re.compile(
     r"^%(package|description|prep|generate_buildrequires|build|install|check|files|changelog|pre|post|preun|postun|trigger\w*)\b"
 )
-OFFLINE_SECTIONS = frozenset({"prep", "build", "install", "check"})
+OFFLINE_SECTIONS = frozenset({"prep", "generate_buildrequires", "build", "install", "check"})
 NETWORK_COMMAND_RE = re.compile(
     r"(?:^|[;&|]\s*|\s)(?:curl|wget|git\s+(?:clone|fetch|pull|submodule)|"
     r"go\s+get|cargo\s+fetch|pip(?:3)?\s+install|npm\s+(?:ci|install)|"
     r"meson\s+wrap|conan\s+install)(?:\s|$)"
 )
-SCRIPTLET_RE = re.compile(r"^%(?:pre|post|preun|postun|trigger\w*)\b")
+SCRIPTLET_RE = re.compile(r"^\s*%(?:pre|post|preun|postun|pretrans|posttrans|preuntrans|postuntrans|verifyscript|trigger\w*|filetrigger\w*|transfiletrigger\w*)\b")
 
 
 @dataclass(frozen=True)
@@ -86,7 +86,7 @@ def _source_filename(url: str, location: Path) -> str:
             f"{location} Source0 must resolve to an HTTPS URL without credentials"
         )
     candidate = parsed.fragment.lstrip("/") if parsed.fragment else Path(parsed.path).name
-    if not candidate or "/" in candidate:
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._+-]*", candidate) or candidate in {".", ".."}:
         raise ManifestError(f"{location} Source0 must resolve to one archive filename")
     return candidate
 
@@ -173,6 +173,13 @@ def _check_package(root: Path, package: Package) -> None:
         raise ManifestError(
             f"{files.sources} checksum for {source_name} does not match manifest"
         )
+    for tag, value in re.findall(r"^((?:Source|Patch)\d+)\s*:\s*(\S+)", spec_text, re.MULTILINE):
+        if tag == "Source0":
+            continue
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._+-]*", value):
+            raise ManifestError(f"{files.spec}: {tag} must name a local package file")
+        if not (files.directory / value).is_file():
+            raise ManifestError(f"{files.spec}: missing {tag} file {value}")
     _check_no_build_network(files.spec, spec_text)
     _check_no_scriptlets(files.spec, spec_text)
 
@@ -195,6 +202,22 @@ def check_repository(root: Path, manifest: PackageSet) -> None:
         raise ManifestError("manifest packages missing directories: " + ", ".join(missing))
     for package in manifest.packages.values():
         _check_package(root, package)
+        text = _read(_package_files(root, package.name).spec)
+        requires = re.findall(r"^BuildRequires:\s*(.*)$", text, re.MULTILINE)
+        for dependency in manifest.packages:
+            if dependency == package.name:
+                continue
+            pattern = rf"(?:^|\s)(?:{re.escape(dependency)}(?:-devel)?|pkgconfig\({re.escape(dependency)}\))(?:\s|$)"
+            if any(re.search(pattern, requirement) for requirement in requires):
+                if dependency not in package.depends_on:
+                    raise ManifestError(f"{package.name}: BuildRequires {dependency} missing from depends_on")
+    if "hyprland-plugins" in manifest.packages and "hyprland" in manifest.packages:
+        compositor = _spec_fields(root, _read(_package_files(root, "hyprland").spec))
+        plugins = _read(_package_files(root, "hyprland-plugins").spec)
+        evr = f"{compositor['version']}-{compositor['release']}"
+        for tag, dependency in (("BuildRequires", "hyprland-devel"), ("Requires", "hyprland%{?_isa}")):
+            if not re.search(rf"^{tag}:\s+{re.escape(dependency)}\s+=\s+{re.escape(evr)}\s*$", plugins, re.MULTILINE):
+                raise ManifestError(f"hyprland-plugins: {tag} must pin {dependency} = {evr}")
 
 
 def _parser() -> argparse.ArgumentParser:

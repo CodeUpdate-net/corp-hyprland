@@ -1,33 +1,39 @@
 # hyprland-protocols packaging notes
 
-## Selection
+## Selected source
 
 - Upstream: <https://github.com/hyprwm/hyprland-protocols>
-- Version/tag: `0.7.0` / `v0.7.0`
-- Source archive: `https://github.com/hyprwm/hyprland-protocols/archive/refs/tags/v0.7.0.tar.gz`
-- SHA-256: `ee419006d7cd20927b9b7c8b5fc430571c151b0385d600508de1a7957294498c`
+- Version/tag: `0.7.1` / `v0.7.1`
+- Commit: `cc9a8fd253bdc00f48a967ecf4828211ef08751f`
+- Source archive: `https://github.com/hyprwm/hyprland-protocols/archive/refs/tags/v0.7.1.tar.gz`
+- SHA-256: `178fa406a1c76e94efeed5d1488abd6029427865f6fd4caf296c71ffaf0d069e`
 - Upstream license: BSD-3-Clause
 
-Hyprland requires `pkgconfig(hyprland-protocols) >= 0.7.0` in the selected
-release line. At the 2026-09-01 review, Fedora 43, 44, and 45 provided 0.4.0,
-so the official package cannot satisfy that build dependency.
+The selected Hyprland stack requires protocol metadata >= 0.7.0. The source
+archive and its hash were checked against `package-set.yaml` on 2026-09-18.
 
 ## Provenance
 
-The spec was written for this project from the v0.7.0 upstream Meson build and
-install definitions plus Fedora's published packaging guidelines. No file was
-copied from the LionHeartP or solopasha packaging repositories. Package naming
-and the `-devel` split intentionally match Fedora so upgrades replace the same
-interface cleanly.
+The original spec was written for this project using upstream v0.7.0 build
+and installation definitions and Fedora packaging guidelines. No spec was
+copied from the LionHeartP or solopasha repositories. Package naming and the
+`-devel` split match Fedora's interface.
 
-The release archive was downloaded from the upstream tag URL and independently
-hashed on 2026-09-01. The `sources` entry is in `sha256sum --check` format and
-must match `package-set.yaml`.
+Upstream 0.7.1 removed the root Meson build and switched to CMake. The spec was
+corrected accordingly; `scripts/source_check.py` now catches a spec still using
+Meson against this archive.
 
-## Build notes
+## Build and validation
 
-This is a noarch, development-only package. Meson installs protocol XML files
-under `%{_datadir}/hyprland-protocols` and pkg-config metadata under
-`%{_datadir}/pkgconfig`. `%check` invokes Meson's test runner; upstream defines
-no test cases for this release, so this currently verifies the configured test
-project only.
+This is a noarch, development-only package. CMake installs XML files beneath
+`%{_datadir}/hyprland-protocols/protocols` and pkg-config metadata beneath
+`%{_datadir}/pkgconfig`. Upstream provides no test suite for this release; there
+is no `%check` section pretending to run one.
+
+```bash
+./scripts/check
+./scripts/build-container --fedora 44 --package hyprland-protocols
+```
+
+Run from the repository root. Repeat on Fedora 45 and build the full package
+set before COPR submission. See [the Podman guide](../../docs/build-and-test.md).

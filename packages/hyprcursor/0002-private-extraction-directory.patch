@@ -1,0 +1,92 @@
+From: Hyprland COPR maintainers
+Subject: [PATCH] Use private temporary directories when extracting cursors
+
+Fedora-specific hardening found during the packaging audit. A shared,
+predictable /tmp directory allowed symlink attacks and concurrent conversions
+to delete or contaminate each other's files. Use mkdtemp (mode 0700) per cursor
+and clean up on all normal return paths. Preserve the existing input quoting.
+
+--- a/hyprcursor-util/src/main.cpp
++++ b/hyprcursor-util/src/main.cpp
+@@ -1,4 +1,5 @@
+ #include <iostream>
++#include <cstdlib>
+ #include <zip.h>
+ #include <optional>
+ #include <filesystem>
+@@ -250,6 +251,25 @@
+     return quoted;
+ }
+ 
++// Private per-cursor storage: never follow or clear a shared /tmp pathname.
++class CExtractDirectory {
++  public:
++    CExtractDirectory() {
++        char pattern[] = "/tmp/hyprcursor-util.XXXXXX";
++        if (const auto result = mkdtemp(pattern))
++            path = result;
++    }
++    ~CExtractDirectory() {
++        if (!path.empty()) {
++            std::error_code error;
++            std::filesystem::remove_all(path, error);
++        }
++    }
++    CExtractDirectory(const CExtractDirectory&) = delete;
++    CExtractDirectory& operator=(const CExtractDirectory&) = delete;
++    std::string path;
++};
++
+ static std::optional<std::string> extractXTheme(const std::string& xpath_, const std::string& out_) {
+ 
+     if (!spawnSync("xcur2png --help 2>&1").contains("xcursor"))
+@@ -284,9 +304,6 @@
+ 
+     std::filesystem::create_directory(out + "/hyprcursors/");
+ 
+-    // create a temp extract dir
+-    std::filesystem::create_directory("/tmp/hyprcursor-util/");
+-
+     // write all cursors
+     for (auto& xcursor : std::filesystem::directory_iterator(xpath + "/cursors/")) {
+         // ignore symlinks, we'll write them to the meta.hl file.
+@@ -298,14 +315,18 @@
+ 
+         std::cout << "Found xcursor " << xcursor.path().stem().string() << "\n";
+ 
++        CExtractDirectory temporary;
++        if (temporary.path.empty())
++            return "failed to create private extraction directory";
++
+         // decompile xcursor
+         const auto OUT = spawnSync(
+-            std::format("rm -f /tmp/hyprcursor-util/* && cd /tmp/hyprcursor-util && xcur2png {} -d /tmp/hyprcursor-util 2>&1",
+-                        shellQuote(std::filesystem::canonical(xcursor.path()).string())));
++            std::format("cd {} && xcur2png {} -d {} 2>&1", shellQuote(temporary.path),
++                        shellQuote(std::filesystem::canonical(xcursor.path()).string()), shellQuote(temporary.path)));
+ 
+         // read the config
+         std::vector<XCursorConfigEntry> entries;
+-        std::ifstream                   xconfig("/tmp/hyprcursor-util/" + xcursor.path().stem().string() + ".conf");
++        std::ifstream                   xconfig(temporary.path + "/" + xcursor.path().stem().string() + ".conf");
+         if (!xconfig.good())
+             return "Failed reading xconfig for " + xcursor.path().string();
+ 
+@@ -346,7 +367,7 @@
+             return "Empty xcursor " + xcursor.path().string();
+ 
+         // copy pngs
+-        for (auto& extracted : std::filesystem::directory_iterator("/tmp/hyprcursor-util")) {
++        for (auto& extracted : std::filesystem::directory_iterator(temporary.path)) {
+             if (extracted.path().string().ends_with(".conf"))
+                 continue;
+ 
+@@ -387,8 +408,6 @@
+         meta << metaString;
+         meta.close();
+     }
+-
+-    std::filesystem::remove_all("/tmp/hyprcursor-util/");
+ 
+     return {};
+ }

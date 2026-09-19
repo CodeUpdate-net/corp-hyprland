@@ -1,6 +1,6 @@
 # Contributing
 
-The project is in its bootstrap phase. Discuss substantial packaging changes
+The project maintains a focused package overlay. Discuss substantial packaging changes
 before investing in a complete spec, because every additional overlay package
 increases the supported ABI and upgrade surface.
 
@@ -26,3 +26,14 @@ you have permission to submit. Do not copy files from the unlicensed reference
 packaging repository. For imported Fedora packaging, preserve applicable
 copyright and license notices and identify the dist-git commit and file origin
 in the package README.
+
+## Required release gates
+
+Use the [Podman workflow](docs/build-and-test.md) to build **every package** on
+Fedora 44 and 45 before COPR submission. Metadata-only checks are not release
+validation. Follow the [operations runbook](docs/operations.md) for immutable
+SCM builds and manual publication, and the [security audit](docs/security-audit.md)
+for sensitive code and RPM inspection. Update these tracked instructions when
+the workflow changes; session memory is not the source of truth.
+
+libsecret packaging belongs to `dtutila/utils`, outside this project's scope.

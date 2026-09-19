@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+"""Build every package in clean Fedora Podman containers, offline and unprivileged."""
+import argparse
+from datetime import datetime, timezone
+import json
+import hashlib
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import uuid
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from package_set import load_manifest
+from source_check import check_sources
+
+
+def run(*args, **kwargs):
+    return subprocess.run(args, check=True, **kwargs)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--fedora', choices=('44', '45'), default='44')
+    parser.add_argument('--package', help='Build this package and its manifest dependency closure')
+    parser.add_argument('--jobs', type=int, default=4, help='Compiler jobs per package (default: 4)')
+    parser.add_argument('--resume', type=Path, help='Resume unchanged inputs from a failed results directory')
+    args = parser.parse_args()
+    if args.jobs < 1:
+        parser.error('--jobs must be positive')
+    root = Path(__file__).resolve().parents[1]
+    manifest = load_manifest(root / 'package-set.yaml')
+    selected = set(manifest.packages)
+    if args.package:
+        if args.package not in selected:
+            parser.error('unknown package')
+        selected = set()
+        def include(name):
+            if name not in selected:
+                selected.add(name)
+                for dependency in manifest.packages[name].depends_on:
+                    include(dependency)
+        include(args.package)
+    check_sources(root, download=True)
+    stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
+    output = args.resume.resolve() if args.resume else root / 'results' / f'fedora-{args.fedora}-{stamp}'
+    if args.resume:
+        if not output.is_relative_to(root / 'results'):
+            parser.error('--resume must be a results directory in this checkout')
+    else:
+        output.mkdir(parents=True)
+        (output / 'rpms').mkdir()
+        (output / 'srpms').mkdir()
+    print(f'Results: {output}', flush=True)
+    # Freeze inputs so a concurrent edit cannot change a running release gate.
+    inputs = output / 'inputs'
+    if args.resume:
+        def inventory(directory):
+            return {str(p.relative_to(directory)): hashlib.sha256(p.read_bytes()).hexdigest()
+                    for p in directory.rglob('*') if p.is_file() and '__pycache__' not in p.parts}
+        if (inventory(root / 'packages') != inventory(inputs / 'packages') or
+                (root / 'package-set.yaml').read_bytes() != (inputs / 'package-set.yaml').read_bytes()):
+            parser.error('resume inputs changed; start a fresh build')
+    else:
+        inputs.mkdir()
+        shutil.copytree(root / 'packages', inputs / 'packages', ignore=shutil.ignore_patterns('__pycache__'))
+        shutil.copy(root / 'package-set.yaml', inputs)
+    base = f'localhost/corp-validation:f{args.fedora}'
+    run('podman', 'build', '--build-arg', f'FEDORA={args.fedora}', '-t', base,
+        '-f', str(root / 'scripts/Containerfile'), str(root / 'scripts'))
+    image_id = subprocess.check_output(['podman', 'image', 'inspect', '--format', '{{.Id}}', base], text=True).strip()
+    evidence = {'release_set': manifest.release_set, 'fedora': args.fedora, 'image_id': image_id,
+                'packages': [], 'status': 'running'}
+    evidence_path = output / 'result.json'
+    names = [name for name in manifest.build_order() if name in selected]
+    if args.resume:
+        previous = json.loads(evidence_path.read_text())
+        if (previous['image_id'] != image_id or previous['fedora'] != args.fedora or
+                previous['packages'] != names[:len(previous['packages'])]):
+            parser.error('resume image, target or package selection changed; start a fresh build')
+        # Revalidate output integrity before allowing prior builds into dependencies.
+        actual_artifacts = {str(p.relative_to(output)) for p in (output / 'rpms').rglob('*.rpm')}
+        if actual_artifacts != set(previous.get('artifacts', {})):
+            parser.error('resume artifacts changed or lack checksums; start a fresh build')
+        for filename, checksum in previous.get('artifacts', {}).items():
+            artifact = output / filename
+            if not artifact.resolve().is_relative_to(output) or hashlib.sha256(artifact.read_bytes()).hexdigest() != checksum:
+                parser.error('resume artifact changed; start a fresh build')
+        if previous['packages'] and not previous.get('artifacts'):
+            parser.error('old results lack artifact checksums; start a fresh build')
+        evidence['packages'] = previous['packages']
+        evidence['artifacts'] = previous.get('artifacts', {})
+    evidence_path.write_text(json.dumps(evidence, indent=2) + '\n')
+    base = image_id
+    try:
+        for name in names:
+            if name in evidence['packages']:
+                continue
+            print(f'Building {name} ({len(evidence["packages"])+1}/{len(names)})', flush=True)
+            prepare = f'corp-prepare-{stamp}'
+            build = f'corp-build-{stamp}'
+            temporary_image = f'localhost/corp-build:{stamp}'
+            with (output / f'{name}.log').open('w') as log:
+                try:
+                    run('podman', 'run', '--rm', '--network=none', '-v', f'{output}/rpms:/repo:rw,z',
+                        base, 'createrepo_c', '/repo', stdout=log, stderr=subprocess.STDOUT)
+                    run('podman', 'run', '--name', prepare,
+                        '-v', f'{inputs}:/src:ro,z', '-v', f'{output}/rpms:/repo:ro,z', base,
+                        'bash', '-euc', '''
+mkdir -p /build/source /build/RPMS /build/SRPMS
+cp -a "/src/packages/$1/." /build/source/
+cd /build/source
+sha256sum --check sources
+dnf -y --setopt=timeout=30 --setopt=minrate=10000 --setopt=retries=3 --repofrompath=local-build,file:///repo --setopt=local-build.gpgcheck=0 builddep "$1.spec"
+chown -R builder:builder /build
+''', 'prepare', name, stdout=log, stderr=subprocess.STDOUT)
+                    run('podman', 'commit', prepare, temporary_image, stdout=log, stderr=subprocess.STDOUT)
+                    run('podman', 'run', '--name', build, '--network=none', '--user', 'builder',
+                        temporary_image, 'rpmbuild', '-ba', '--define', '_topdir /build/rpm',
+                        '--define', f'_smp_mflags -j{args.jobs}',
+                        '--define', '_sourcedir /build/source', '--define', '_rpmdir /build/RPMS',
+                        '--define', '_srcrpmdir /build/SRPMS', f'/build/source/{name}.spec',
+                        stdout=log, stderr=subprocess.STDOUT)
+                    run('podman', 'cp', f'{build}:/build/RPMS/.', str(output / 'rpms'), stdout=log, stderr=subprocess.STDOUT)
+                    run('podman', 'cp', f'{build}:/build/SRPMS/.', str(output / 'srpms'), stdout=log, stderr=subprocess.STDOUT)
+                finally:
+                    subprocess.run(['podman', 'rm', '-f', prepare, build], stdout=log, stderr=subprocess.STDOUT)
+                    subprocess.run(['podman', 'rmi', temporary_image], stdout=log, stderr=subprocess.STDOUT)
+            evidence['packages'].append(name)
+            evidence['artifacts'] = {str(p.relative_to(output)): hashlib.sha256(p.read_bytes()).hexdigest()
+                                     for p in (output / 'rpms').rglob('*.rpm')}
+            evidence_path.write_text(json.dumps(evidence, indent=2) + '\n')
+        with (output / 'install.log').open('w') as log:
+            run('podman', 'run', '--rm', '-v', f'{output}/rpms:/repo:ro,z', base,
+                'bash', '-euc', 'dnf -y --setopt=timeout=30 --setopt=minrate=10000 --setopt=retries=3 install /repo/*/*.rpm; dnf check',
+                stdout=log, stderr=subprocess.STDOUT)
+        with (output / 'rpmlint.log').open('w') as log:
+            run('podman', 'run', '--rm', '--network=none', '-v', f'{output}/rpms:/repo:ro,z',
+                '-v', f'{root}/scripts/rpmlint.toml:/audit.toml:ro,z', base,
+                'bash', '-euc', 'rpmlint -c /audit.toml /repo/*/*.rpm', stdout=log, stderr=subprocess.STDOUT)
+        evidence['status'] = 'passed'
+        print(f'PASS: {len(names)} packages built offline, installed and linted; {output}', flush=True)
+    except subprocess.CalledProcessError as exc:
+        evidence['status'] = 'failed'
+        print(f'FAIL: see logs in {output}: {exc}', file=sys.stderr)
+        return 1
+    finally:
+        evidence_path.write_text(json.dumps(evidence, indent=2) + '\n')
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

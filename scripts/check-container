@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+repo_root=$(cd -- "$(dirname -- "$0")/.." && pwd)
+fedora=${FEDORA:-44}
+[[ "$fedora" =~ ^[0-9]+$ ]] || { echo 'FEDORA must be a release number' >&2; exit 2; }
+command -v podman >/dev/null || { echo 'Install Podman or the native RPM validation tools; checks cannot be skipped.' >&2; exit 1; }
+image="localhost/corp-validation:f$fedora"
+podman build --build-arg "FEDORA=$fedora" -t "$image" -f "$repo_root/scripts/Containerfile" "$repo_root/scripts"
+# Copy inputs into container storage: validation never modifies the checkout.
+podman run --rm -v "$repo_root:/src:ro,z" "$image" bash -euc '
+    mkdir /work
+    cp -a /src/packages /src/scripts /src/tests /src/schemas /src/package-set.yaml /work/
+    cd /work
+    ./scripts/check
+'

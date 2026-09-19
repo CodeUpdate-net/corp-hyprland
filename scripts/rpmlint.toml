@@ -1,0 +1,9 @@
+# Reviewed exceptions, limited to known package/path diagnostics. See docs/security-audit.md.
+Filters = [
+  "spelling-error .*Hyprland",
+  "spelling-error .*wlroots",
+  "hyprland-plugins\\.x86_64: E: invalid-soname /usr/lib64/lib(borders-plus-plus|csgo-vulkan-fix|hyprbars|hyprfocus)\\.so ",
+  "hyprland-qt-support\\.x86_64: E: invalid-soname /usr/lib64/libhyprland-quick-style(-impl)?\\.so ",
+  "hyprqt6engine\\.x86_64: E: invalid-soname /usr/lib64/libhyprqt6engine-common\\.so ",
+  "uwsm\\.noarch: E: non-executable-script /usr/share/uwsm/plugins/[a-z]+\\.sh 644 /bin/false",
+]

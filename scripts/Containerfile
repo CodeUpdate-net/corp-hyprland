@@ -1,0 +1,8 @@
+ARG FEDORA=44
+FROM registry.fedoraproject.org/fedora:${FEDORA}
+RUN dnf -y --setopt=timeout=30 --setopt=minrate=10000 --setopt=retries=3 install python3-pyyaml rpm-build rpmdevtools rpmlint \
+    cmake meson gcc-c++ make git-core systemd-rpm-macros \
+    glibc-langpack-en createrepo_c dnf5-plugins shadow-utils \
+    && dnf clean all
+ENV LANG=C.UTF-8
+RUN useradd --create-home builder

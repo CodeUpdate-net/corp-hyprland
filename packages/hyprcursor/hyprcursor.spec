@@ -1,15 +1,18 @@
 Name:           hyprcursor
 Version:        0.1.13
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Hyprland cursor format library and utilities
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprcursor
 Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
+Source1:        test-extraction.py
 Patch0:         0001-quote-xcur2png-input-path.patch
+Patch1:         0002-private-extraction-directory.patch
 
 ExcludeArch:    %{ix86}
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
+BuildRequires:  python3
 BuildRequires:  pkgconfig(cairo)
 BuildRequires:  pkgconfig(hyprlang) >= 0.4.2
 BuildRequires:  pkgconfig(librsvg-2.0)
@@ -39,6 +42,9 @@ Headers and pkg-config metadata for developing against %{name}.
 sed -i '/^Version:/a Requires: cairo' \
   %{buildroot}%{_libdir}/pkgconfig/hyprcursor.pc
 
+%check
+python3 %{SOURCE1} %{_vpath_builddir}/hyprcursor-util
+
 %files
 %license LICENSE
 %doc README.md
@@ -52,6 +58,9 @@ sed -i '/^Version:/a Requires: cairo' \
 %{_libdir}/pkgconfig/hyprcursor.pc
 
 %changelog
+* Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.1.13-3
+- Use private temporary directories for cursor extraction, with automatic cleanup
+
 * Tue Sep 01 2026 COPR Maintainer <noreply@example.invalid> - 0.1.13-2
 - Add development dependency exposed by public headers
 

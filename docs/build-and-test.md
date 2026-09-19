@@ -75,6 +75,12 @@ publication, also run a clean Mock build for each target, an upgrade from Fedora
 packages, and the VM session checks in [operations.md](operations.md). A container
 cannot validate GPU access, screen locking, PAM prompts or a real portal session.
 
+## Desktop and plugin runtime tests
+
+Follow [runtime-testing.md](runtime-testing.md) to run the signed candidates in
+a nested compositor inside disposable Podman containers. Record actual coverage
+and remaining hardware/session limitations.
+
 ## Native SRPM and Mock alternatives
 
 ```bash

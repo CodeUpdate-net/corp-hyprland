@@ -32,6 +32,9 @@ On a security incident, freeze publication, preserve evidence and privately
 coordinate with the project owner/upstream. Prepare a patched candidate, rebuild
 ABI-sensitive consumers, repeat the gates and record a recovery release.
 
+See [security-patches.md](security-patches.md) for patch-by-patch rationale,
+regression tests, affected RPM releases and limitations.
+
 ## Findings from the 2026-09-18 packaging review
 
 - `scripts/check` returned success when RPM tooling was absent. It now uses a
@@ -78,5 +81,23 @@ runtime safety. Review any new error rather than broadening these filters.
 
 See [validation-2026-09-18.md](validation-2026-09-18.md) for observed checks and
 outstanding release gates. The [audit-fix candidate record](../releases/2026-09-19.1.json)
-contains its successful signed COPR builds and install tests. Deliberate
-publication remains withheld pending the remaining release gates.
+contains its signed COPR builds, install tests, runtime coverage and publication
+state. See [runtime-testing.md](runtime-testing.md) for the scope of the
+maintenance-release desktop checks and the remaining full-session coverage.
+
+
+## Public advisory review on 2026-09-19
+
+The GitHub REST public repository advisory endpoint was queried successfully for
+all 29 upstream repositories listed in `package-set.yaml`:
+`https://api.github.com/repos/<owner>/<repository>/security-advisories?per_page=100`.
+Every response was an empty list, with no pagination. The exact URLs, pinned
+versions, query time and responses are retained in
+`results/copr-2026-09-19.1/upstream-advisories.json`; a summary is in the release
+record. This includes the previously unavailable hyprcursor advisory check.
+
+Lua's [official bug list](https://www.lua.org/bugs.html#5.5.1) also listed no
+reported bugs for 5.5.1 when checked. No applicable published upstream advisory
+was found in these sources. This is a review of public upstream advisories,
+not an exhaustive CVE database correlation or a source-code security proof;
+private/unreported flaws and Fedora dependency advisories are outside its scope.

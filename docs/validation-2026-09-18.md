@@ -93,23 +93,26 @@ hyprutils 10933493 and hyprpolkitagent 10933345.
 
 Upgrade evidence concerns the previous-to-current **public** release. The new
 audit-fix RPMs subsequently passed COPR builds, signature verification and
-public-to-candidate upgrade tests on both targets. Public metadata regeneration
-remains withheld; see the candidate record for exact build IDs and state.
+public-to-candidate upgrade tests on both targets. See the release record for exact build IDs, subsequent runtime evidence and
+publication state.
 
-## Limits and required pre-publication gates
+## Original review limits and subsequent runtime validation
 
 The enabled Fedora repositories offered no `hyprland` package on either target
 when the upgrade baseline was requested. A Fedora-to-COPR compositor upgrade
 could not be exercised; it is not counted as a pass. Previous-release upgrades
 passed on both targets as described above.
 
-A nested/VM desktop session, actual plugin loading, GPU paths, screen-sharing,
-lock/unlock and polkit authentication were not exercised by the containers.
-The changed packages subsequently passed COPR’s clean Mock builds; a complete
-upstream advisory review remains a release gate.
+The original build containers did not exercise desktop runtime behavior.
+Subsequent nested Fedora 44/45 sessions passed actual plugin load/render/unload,
+client mapping, configuration reload, wallpaper, capture, idle/resume and PAM
+lock/unlock checks. See [runtime-testing.md](runtime-testing.md) for reproducible
+commands, observed warnings and remaining portal/polkit/hardware limitations.
+The changed packages also passed COPR’s clean Mock builds. A subsequent public
+upstream advisory review covered all 29 projects; see [security-audit.md](security-audit.md).
 No claim is made that all upstream source code is vulnerability-free.
 
-The GitHub security pages consulted for
+During the initial review, the GitHub security pages consulted for
 [Hyprland](https://github.com/hyprwm/Hyprland/security),
 [hyprlock](https://github.com/hyprwm/hyprlock/security), and
 [hyprpolkitagent](https://github.com/hyprwm/hyprpolkitagent/security)
@@ -117,5 +120,7 @@ showed no published advisories in the retrieved pages; some results were cached.
 The hyprcursor security page could not be retrieved. These limited checks are
 not a complete or live CVE assessment.
 
-The signed COPR builds and install tests now pass. Review the remaining
-release gates before regenerating metadata. Manual publication remains enabled.
+The signed COPR builds, install tests and scoped maintenance-release runtime
+checks now pass. The user authorized publication after those runtime tests.
+Manual publication remains enabled for future builds. Public publication and
+post-publication verification are recorded in `releases/2026-09-19.1.json`.

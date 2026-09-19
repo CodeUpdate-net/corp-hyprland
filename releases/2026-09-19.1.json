@@ -3,7 +3,7 @@
   "release_set": "2026-09-19.1",
   "previous_release_set": "2026-09-18.1",
   "status": "validated_candidate",
-  "publication": "withheld; manual COPR repository regeneration has not been requested or performed",
+  "publication": "Authorized by the user after desktop/plugin runtime checks; regeneration pending.",
   "project": "dtutila/hyprland",
   "source_repository": "https://github.com/CodeUpdate-net/corp-hyprland.git",
   "source_commit": "c80b5e91a32aa4322a740c62723269d532cfb93c",
@@ -26,10 +26,7 @@
     "record": "docs/validation-2026-09-18.md",
     "release_id_change": "Metadata-only change after full builds; RPM inputs are unchanged."
   },
-  "pending_publication_gates": [
-    "real desktop/VM session and plugin-loading tests",
-    "complete upstream advisory review"
-  ],
+  "pending_publication_gates": [],
   "packages": {
     "glaze": {
       "version": "7.2.0",
@@ -316,5 +313,107 @@
     "hyprland-plugins/fedora-45-x86_64/hyprland-plugins-debuginfo-0.56.0-3.fc45.x86_64.rpm": "592a78e8682b41e453f93c34ce4192d6f37c3c98f80eca437cffeba6f427e6e8",
     "hyprland-plugins/fedora-45-x86_64/hyprland-plugins-debugsource-0.56.0-3.fc45.x86_64.rpm": "c9eced9b1ce08ab41ef02c0f4cdddca92316434cf84da71232ba8e841d1166b9"
   },
-  "validated_on": "2026-09-19T17:49:04.614447+00:00"
+  "validated_on": "2026-09-19T17:49:04.614447+00:00",
+  "upstream_advisory_review": {
+    "checked_at": "2026-09-19T18:07:59.236535+00:00",
+    "scope": "Public GitHub repository advisories for all 29 pinned projects; official Lua 5.5.1 bug list",
+    "repositories_checked": 29,
+    "published_advisories_found": 0,
+    "evidence": "results/copr-2026-09-19.1/upstream-advisories.json",
+    "limitations": "Not an exhaustive CVE correlation, Fedora dependency audit or proof of absence of vulnerabilities."
+  },
+  "runtime_scope": "Two-package maintenance release: nested compositor and four plugins plus wallpaper, capture, idle/resume and PAM lock/unlock on both targets. Other RPMs unchanged.",
+  "remaining_validation_coverage": [
+    "Portal/PipeWire screen sharing and polkit authentication in a complete desktop session",
+    "Login, logind sleep inhibition/suspend, multi-monitor/HDR and other GPUs",
+    "Plugin-specific game/Vulkan behavior beyond load/render/unload"
+  ],
+  "runtime_diagnostics": [
+    "After unlock: missing color-description fallback (source returns original color) and lock-surface destruction warning; rendering/session remained usable.",
+    "Private container bus has no logind inhibition; direct debug startup and missing optional guiutils produce expected notices."
+  ],
+  "desktop_runtime_verification": {
+    "fedora-44-x86_64": {
+      "status": "passed",
+      "tests": [
+        "nested compositor startup, output and Lua configuration",
+        "Wayland terminal maps",
+        "libborders-plus-plus.so loads, renders with client, unloads",
+        "libcsgo-vulkan-fix.so loads, renders with client, unloads",
+        "libhyprbars.so loads, renders with client, unloads",
+        "libhyprfocus.so loads, renders with client, unloads",
+        "configuration reload and client survival",
+        "hyprpaper wallpaper surface maps and screenshot capture succeeds",
+        "hypridle timeout and input-driven resume hooks",
+        "hyprlock engages, rejects wrong password, PAM unlock succeeds"
+      ],
+      "evidence": "results/copr-2026-09-19.1/desktop-final-evidence-44",
+      "artifact_sha256": {
+        "Hyprland.log": "a66dec3571f1f79ec525550f363bff3bd655484a5cd101972b25b090926e1de0",
+        "after-unlock.png": "16f7d2726c07364d4b1485d0cd88973b5a9ff75d145f4d90249238da1f5abf8e",
+        "commands.log": "4fe72e6db2e8330b0618ce605b1cc36145312e6962dc7ec7e1af0341289585bf",
+        "compositor-hyprland.log": "af1295f4c1bafd41d1c988f0d4e23e20b7508919ba690c6b0b23c4a10e54ddf3",
+        "foot.log": "477a6c77df4568df8869caafead74974d738b07c9397ab114fb2421636fde6a1",
+        "hypridle.conf": "bf85507c95fd27ab85fa91e746e7986b666fe8a5518df039090083b83433c4ab",
+        "hypridle.log": "146072d2770c3c7ac8a7dbf3e0d8a6df98fff5ed3c6d2d0a660333f455d904b5",
+        "hyprland.lua": "cd7013fa0688c8b390f9c78e7550c710c6e113a0f14ba373d7d591ee032719e4",
+        "hyprlock.conf": "5c68c37d19a14e84ede7af9ebd00f0181703a24749919419f9ebcf9b6d3c6f9d",
+        "hyprlock.log": "fcf7e84d906d9e507b10c96f8a415ad7e4fb747db62e1a5cf999104510e8074b",
+        "hyprpaper.conf": "389d8ad7b2cf050e77c32ce0d34bc695f2bf64af3d7975af8142f60ba6634edf",
+        "hyprpaper.log": "1cb945a15b8af82c44be5b4037295d84253edd8c34d5e8d7b773a642d47bdb9a",
+        "idle-fired": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "idle-resumed": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "libborders-plus-plus.png": "a83d557bc54f5f8dfe3c8b9c6dee7be292297e369d73e66d3289330f9e947969",
+        "libcsgo-vulkan-fix.png": "7f2065a3ebb5aca847dbcef215310969158fad4efd93f979548671ac71b36e36",
+        "libhyprbars.png": "b099d31e9b490fccce208e5c43f272b44760805be910f408943415e88909aefd",
+        "libhyprfocus.png": "a9a0de8722841d827368bfa6caaa2328c2a7c397c0e2f898ab6122ccd2cb4a30",
+        "monitors.json": "070ded172044f9b056033a21c8d6bc300d2914a8e26d2a7787a7f6c1c2427613",
+        "result.json": "1777650d05ca4092711035104b81f37ac14dae0c2ea8569fd52b664502feb19a",
+        "rolling.log": "61889741b910c9ae8a521f8c15dd91567c23b1ee5c834eaf918f4c80c81b7b96",
+        "wallpaper.png": "28eadc09d1cd4c1262d20edd88038b9c905aa00f96dd201b221cadcfe550b021",
+        "wallpaper.svg": "78d0fc43a0754f1fb550657e643070467e9230c80ec8acfd948137be5ae4bba9"
+      }
+    },
+    "fedora-45-x86_64": {
+      "status": "passed",
+      "tests": [
+        "nested compositor startup, output and Lua configuration",
+        "Wayland terminal maps",
+        "libborders-plus-plus.so loads, renders with client, unloads",
+        "libcsgo-vulkan-fix.so loads, renders with client, unloads",
+        "libhyprbars.so loads, renders with client, unloads",
+        "libhyprfocus.so loads, renders with client, unloads",
+        "configuration reload and client survival",
+        "hyprpaper wallpaper surface maps and screenshot capture succeeds",
+        "hypridle timeout and input-driven resume hooks",
+        "hyprlock engages, rejects wrong password, PAM unlock succeeds"
+      ],
+      "evidence": "results/copr-2026-09-19.1/desktop-final-evidence-45",
+      "artifact_sha256": {
+        "Hyprland.log": "0db35ba8044290b3a0490c9ecb548ad17672ee0867070ff36c6234a515a53262",
+        "after-unlock.png": "f9f5718dcf6986380fcdbb90349e334f170f3a0a45e5a0a3471e8aa6ac18333d",
+        "commands.log": "6c368dbb7b516a4c9f91fc8e7144305164a1d304882c4a9f31f0d4b6fbd3bf74",
+        "compositor-hyprland.log": "0794a34df61012cd5c2d26339883e5c07035fef0c7a75d4dd12e46580f45e119",
+        "foot.log": "5531da5d5f877d4d9ee2e247aae89e1b11ca9b75942f7f0d4e78468ebf1f3b65",
+        "hypridle.conf": "bf85507c95fd27ab85fa91e746e7986b666fe8a5518df039090083b83433c4ab",
+        "hypridle.log": "0eb5fcff44955a65dbef4c256fb31f605b98b2c8b371952bb505e9f23ee5e746",
+        "hyprland.lua": "cd7013fa0688c8b390f9c78e7550c710c6e113a0f14ba373d7d591ee032719e4",
+        "hyprlock.conf": "5c68c37d19a14e84ede7af9ebd00f0181703a24749919419f9ebcf9b6d3c6f9d",
+        "hyprlock.log": "d18b2fe9953c10a95610f669b9ed586c2ae66b431b343d3d594bfb4f0400e64f",
+        "hyprpaper.conf": "389d8ad7b2cf050e77c32ce0d34bc695f2bf64af3d7975af8142f60ba6634edf",
+        "hyprpaper.log": "1cb945a15b8af82c44be5b4037295d84253edd8c34d5e8d7b773a642d47bdb9a",
+        "idle-fired": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "idle-resumed": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "libborders-plus-plus.png": "6d3eac162fe8827a33fe14a56ae2ecf8877be918623f5ecb1628b23a5635a38d",
+        "libcsgo-vulkan-fix.png": "e96a0d55348fe7c5ea1df677e18b607f78f8082d60c7494fd8b10cbd960ef2e9",
+        "libhyprbars.png": "1dd3bb8b109f9bc9b98c1c7b5efa944bd4b877fa79cedb1666607c819419afdb",
+        "libhyprfocus.png": "b63bea697258c515dbb2fb4aab157995177e0a4bd54827bc16f6d42122db0e88",
+        "monitors.json": "6ece845d66913741ed1278b0090f3abf1f0234ba70cd66ed32bd14a6347bbe85",
+        "result.json": "1777650d05ca4092711035104b81f37ac14dae0c2ea8569fd52b664502feb19a",
+        "rolling.log": "40d83708006d29b7fa9b1b1264456e52e0a7c16e9ae8ad9136c478596af7a5e5",
+        "wallpaper.png": "f324b903871a1e6f4a3bc32f3640522ea54e06d45cdac366f44d1fe9a7a6424f",
+        "wallpaper.svg": "78d0fc43a0754f1fb550657e643070467e9230c80ec8acfd948137be5ae4bba9"
+      }
+    }
+  }
 }

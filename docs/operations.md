@@ -104,6 +104,11 @@ For each target, in disposable roots or VMs:
 - Check logs for missing libraries, unresolved symbols, plugin ABI errors,
   portal conflicts and crashes. Container install success does not cover this.
 
+For reproducible nested coverage and its limits, see
+[runtime-testing.md](runtime-testing.md). Record the release-specific scope; a
+maintenance update must not claim that unchanged desktop services received full
+VM/hardware qualification when only the nested checks ran.
+
 Useful inspection commands (with the candidate RPM path selected explicitly):
 
 ```bash

@@ -56,3 +56,12 @@ package source followed Fedora's `f44` DistGit branch with `auto_rebuild=false`;
 that alone did not monitor GNOME releases. Its source configuration is now
 pinned to the immutable Git recipe for this update, with webhook rebuilding
 disabled. An updater must submit each new validated source commit explicitly.
+
+
+Current update: **0.21.8.2-2.1**, published on 2026-09-20 from
+[COPR build 11007252](https://copr.fedorainfracloud.org/coprs/build/11007252/).
+Both targets passed all 25 upstream tests locally and in COPR, signed candidate
+and fresh public installation checks, dependency checks and isolated installed
+secret operations. See the [release record](../../releases/utils-libsecret-0.21.8.2.json).
+
+Scheduling reference: [GitHub Actions schedule trigger](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).

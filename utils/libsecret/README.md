@@ -17,7 +17,10 @@ Verify `sources`, install the spec's BuildRequires in a disposable Fedora
 container, and run `rpmbuild -ba` offline as an unprivileged user on both targets.
 Test upgrades from the prior public COPR build, `dnf check`, and installed
 `secret-tool` store/lookup/clear operations using a private D-Bus mock service.
-Do not use the user's actual keyring or session bus for package tests.
+Run `bash utils/libsecret/test-installed.sh` inside that disposable container
+(with python3-dbus, python3-gobject-base and dbus-daemon installed). It creates
+its own private D-Bus session. Do not use the user's actual keyring or session
+bus for package tests.
 
 Submit with an immutable release-branch commit:
 
@@ -50,5 +53,6 @@ post-build tests, inspect project-wide pending builds and verify public results.
 
 No scheduled updater is installed by this package update. COPR's previous
 package source followed Fedora's `f44` DistGit branch with `auto_rebuild=false`;
-that alone did not monitor GNOME releases. The immutable SCM submission above
-provides the recipe for this update.
+that alone did not monitor GNOME releases. Its source configuration is now
+pinned to the immutable Git recipe for this update, with webhook rebuilding
+disabled. An updater must submit each new validated source commit explicitly.

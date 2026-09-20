@@ -21,6 +21,7 @@ and preserve RPMs and logs under `results/`. Python 3.11+ and PyYAML 6 are requi
 - [Podman build and test instructions](docs/build-and-test.md)
 - [Nested desktop and plugin runtime tests](docs/runtime-testing.md)
 - [Build, publish and rollback runbook](docs/operations.md)
+- [libsecret recipe and update automation notes for dtutila/utils](utils/libsecret/README.md)
 - [Current COPR configuration](docs/copr-project.md)
 - [Security audit procedure and findings](docs/security-audit.md)
 - [Security patches, regression tests and limitations](docs/security-patches.md)

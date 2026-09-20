@@ -3,8 +3,13 @@
 COPR target: **dtutila/utils**, Fedora 44/45 x86_64. This recipe is maintained
 outside the Hyprland `packages/` directory and `package-set.yaml`.
 
-Version 0.21.8.2 uses the official GNOME archive and Fedora's GnuTLS configuration,
-license declaration and runtime/devel/mock-service subpackages. Release 2.1
+Version 0.21.8.2 uses the official GNOME archive and Fedora's license declaration
+and runtime/devel/mock-service subpackages. The spec defaults to GnuTLS, but
+**dtutila/utils builds with `--without gnutls`, selecting libgcrypt**. Both
+published RPMs link to `libgcrypt.so.20`. The initial local builds tested the
+GnuTLS default; COPR's 25-test suites and signed/public installed-runtime tests
+tested the published libgcrypt build. To reproduce the COPR backend locally,
+pass `--without gnutls` to both dependency preparation and `rpmbuild`. Release 2.1
 sorts after Fedora 44's 0.21.8.2-2 while allowing later Fedora release 3 to win.
 There are no downstream source patches. Installed non-executable mock-service
 helpers have their obsolete executable shebangs removed. `rpmlint.toml` limits

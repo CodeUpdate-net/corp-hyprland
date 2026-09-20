@@ -1,0 +1,8 @@
+# Reviewed exceptions: the gnome-keyring name and unchanged upstream license
+# postal addresses. Runtime/script diagnostics remain enabled.
+Filters = [
+  "^libsecret\\.x86_64: E: spelling-error .*keyring",
+  "^libsecret\\.x86_64: E: incorrect-fsf-address /usr/share/licenses/libsecret/COPYING$",
+  "^libsecret-devel\\.x86_64: E: incorrect-fsf-address /usr/share/licenses/libsecret-devel/COPYING$",
+  "^libsecret-mock-service\\.noarch: E: incorrect-fsf-address /usr/share/licenses/libsecret-mock-service/COPYING$",
+]

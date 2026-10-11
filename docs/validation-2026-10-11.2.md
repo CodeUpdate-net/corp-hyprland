@@ -6,6 +6,12 @@ hashes, signatures, transactions, build IDs and evidence paths. This release
 supersedes the blocked Git-only candidate `2026-10-11.1` and upgrades the previous
 public set `2026-09-19.1`.
 
+The tested release was fast-forwarded into `main` and pushed. GitHub metadata
+and Fedora 44/45 RPM checks passed for both `main` and the release-set branch.
+Task VM processes, baseline images and ephemeral VM SSH files were removed;
+raw logs, RPMs and VM disk evidence were retained. The integration and cleanup
+details are in the release record.
+
 ## Reviewed sources and selected builds
 
 The [upstream review](validation-2026-10-11.md) checked all 29 manifest

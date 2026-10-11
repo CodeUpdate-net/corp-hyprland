@@ -30,5 +30,9 @@ and preserve RPMs and logs under `results/`. Python 3.11+ and PyYAML 6 are requi
 Manual COPR publication is enabled: successful future builds remain candidates
 until the operator intentionally regenerates repository metadata after testing.
 
+The latest published release is [2026-10-11.2](docs/validation-2026-10-11.2.md),
+with verified signed installs and desktop VM checks on both supported targets.
+Its [release record](releases/2026-10-11.2.json) includes exact builds and limits.
+
 The repository-wide license and private security contact still need an owner
 decision. Preserve all third-party license/provenance notices.

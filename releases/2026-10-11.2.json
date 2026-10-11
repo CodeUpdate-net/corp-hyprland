@@ -3,7 +3,7 @@
   "release_set": "2026-10-11.2",
   "previous_release_set": "2026-09-19.1",
   "supersedes_candidate": "2026-10-11.1",
-  "status": "published-main-fast-forward-pending",
+  "status": "published",
   "project": "dtutila/hyprland",
   "source_repository": "https://github.com/CodeUpdate-net/corp-hyprland.git",
   "source_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d",
@@ -1024,9 +1024,7 @@
       "public_api_prefix_review": "results/publication-2026-10-11.2/lua-prefix-review.json"
     }
   },
-  "pending_publication_gates": [
-    "Fast-forward qualified release into main, push and verify remote/CI"
-  ],
+  "pending_publication_gates": [],
   "fedora_compositor_upgrade": {
     "status": "not-applicable",
     "reason": "Successful fresh native Fedora 44/45 repository queries found no Hyprland compositor/devel RPM; available Hypr component transitions remain required and are being tested.",
@@ -1642,5 +1640,111 @@
     "manual_publication_enabled": true,
     "build_networking_enabled": false,
     "project_key_unchanged": true
+  },
+  "integration": {
+    "status": "passed",
+    "method": "fast-forward",
+    "qualified_release_commit": "5abdedf9f5cf2d0481b6e9fcfffacd32a5272c48",
+    "previous_main_commit": "4c05365cb696123cf23340d4f0f0ac5c111aa62a",
+    "remote_refs_verified": {
+      "refs/heads/main": "5abdedf9f5cf2d0481b6e9fcfffacd32a5272c48",
+      "refs/heads/release-set/2026-10-11.2": "5abdedf9f5cf2d0481b6e9fcfffacd32a5272c48"
+    },
+    "verified_at": "2026-10-11T23:58:04.753576+00:00",
+    "github_ci": {
+      "status": "passed",
+      "commit": "5abdedf9f5cf2d0481b6e9fcfffacd32a5272c48",
+      "runs": [
+        {
+          "id": 38186094385,
+          "url": "https://github.com/CodeUpdate-net/corp-hyprland/actions/runs/38186094385",
+          "branch": "main",
+          "jobs": [
+            {
+              "name": "rpm-static (44)",
+              "conclusion": "success"
+            },
+            {
+              "name": "rpm-static (45)",
+              "conclusion": "success"
+            },
+            {
+              "name": "metadata",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 38186092871,
+          "url": "https://github.com/CodeUpdate-net/corp-hyprland/actions/runs/38186092871",
+          "branch": "release-set/2026-10-11.2",
+          "jobs": [
+            {
+              "name": "metadata",
+              "conclusion": "success"
+            },
+            {
+              "name": "rpm-static (45)",
+              "conclusion": "success"
+            },
+            {
+              "name": "rpm-static (44)",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    "scope": "Qualified package content was fast-forwarded into main and pushed without force. Subsequent completion record/docs changes preserve exactly the immutable COPR package recipes."
+  },
+  "resource_cleanup": {
+    "status": "completed",
+    "completed_at": "2026-10-11T23:55:50.777584+00:00",
+    "vms": [
+      {
+        "fedora": 44,
+        "pid": 1329663,
+        "status": "stopped",
+        "shutdown_ssh_exit_code": 0,
+        "own_vm_sigterm_fallback": false,
+        "disk_evidence_retained": "/home/dtutila/src/corp/results/publication-2026-10-11.2/vm-44/disk.qcow2"
+      },
+      {
+        "fedora": 45,
+        "pid": 1329689,
+        "status": "stopped",
+        "shutdown_ssh_exit_code": 0,
+        "own_vm_sigterm_fallback": false,
+        "disk_evidence_retained": "/home/dtutila/src/corp/results/publication-2026-10-11.2/vm-45/disk.qcow2"
+      }
+    ],
+    "removed_task_images": [
+      {
+        "tag": "localhost/corp-upgrade-baseline:20261011-2-previous-f44",
+        "image_id": "508105dbabe077981498eef2fa892ba045cdc5d2eead9f2e6c9837d115541fee",
+        "status": "removed-own-task-tag"
+      },
+      {
+        "tag": "localhost/corp-upgrade-baseline:20261011-2-fedora-f44",
+        "image_id": "3e85806f5777dc6ec9e391a93e2b4702eba2598694bb905cd37ef067788059ac",
+        "status": "removed-own-task-tag"
+      },
+      {
+        "tag": "localhost/corp-upgrade-baseline:20261011-2-previous-f45",
+        "image_id": "b443c8b644bb9d62e410934eb4938e6799a27778ee480fb45113d017fda7b4c3",
+        "status": "removed-own-task-tag"
+      },
+      {
+        "tag": "localhost/corp-upgrade-baseline:20261011-2-fedora-f45",
+        "image_id": "99b034265781cce53e99174a5f38f344733291edd73b3e76a442326905cccfc3",
+        "status": "removed-own-task-tag"
+      }
+    ],
+    "removed_ephemeral_key_files": [
+      "/tmp/corp-publication-vm-key",
+      "/tmp/corp-publication-vm-key.pub",
+      "/tmp/corp-publication-vm-known-hosts"
+    ],
+    "scope": "Only exact task QEMU processes, four recorded upgrade-baseline image tags and task ephemeral SSH files. Raw logs, RPMs, VM disks and source-image evidence retained. No prune or host desktop action."
   }
 }

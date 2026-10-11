@@ -3,7 +3,7 @@
   "release_set": "2026-10-11.2",
   "previous_release_set": "2026-09-19.1",
   "supersedes_candidate": "2026-10-11.1",
-  "status": "qualified-authorized-for-regeneration",
+  "status": "published-main-fast-forward-pending",
   "project": "dtutila/hyprland",
   "source_repository": "https://github.com/CodeUpdate-net/corp-hyprland.git",
   "source_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d",
@@ -836,9 +836,166 @@
     "hyprland-plugins": 11109743
   },
   "publication": {
-    "status": "qualified-authorized-for-regeneration",
+    "status": "published-public-metadata-and-signed-installs-verified",
     "manual_publication_enabled": true,
-    "build_networking_enabled": false
+    "build_networking_enabled": false,
+    "prepublication_ci": {
+      "status": "passed",
+      "commit": "052a89de885913916a454a5c8099ceca44dffd69",
+      "runs": [
+        {
+          "id": 38185675699,
+          "url": "https://github.com/CodeUpdate-net/corp-hyprland/actions/runs/38185675699",
+          "branch": "release-set/2026-10-11.2",
+          "jobs": [
+            {
+              "name": "rpm-static (45)",
+              "conclusion": "success"
+            },
+            {
+              "name": "rpm-static (44)",
+              "conclusion": "success"
+            },
+            {
+              "name": "metadata",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    "regeneration_requested_at": "2026-10-11T23:50:25.974541+00:00",
+    "prepublication_evidence_commit": "052a89de885913916a454a5c8099ceca44dffd69",
+    "command": "copr-cli regenerate-repos dtutila/hyprland",
+    "regeneration_command_exit_code": 0,
+    "regeneration_command_completed_at": "2026-10-11T23:50:26.472091+00:00",
+    "regeneration_log": "results/publication-2026-10-11.2/regenerate-repos.log",
+    "early_metadata_attempts": {
+      "44": {
+        "status": "failed-stale-metadata-before-regeneration-completed",
+        "evidence": "results/publication-2026-10-11.2/public-fresh-44-metadata-pending-attempt-1",
+        "metadata": {
+          "url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-44-x86_64/repodata/repomd.xml",
+          "fetched_at_unix": 1791762645.294994,
+          "sha256": "6be13ab6d7f19c9800419e9aba2df0bf4f52f25e924fcbd7d5e325f1a13ad2bd",
+          "headers": {
+            "x-amz-request-id": "XXFXH108W5R111CH",
+            "x-amz-id-2": "7gzUqV1Z9ab1P1BAIyVh3Jj1x2kY0HcWLvBYtNWZkMLoQMFXofa+X8AFhM4F/sRpNhhI3fq77KVeDGL8EJvue6CQd7eRckeO",
+            "Content-Length": "1561",
+            "Accept-Ranges": "bytes",
+            "Date": "Sun, 11 Oct 2026 23:50:45 GMT",
+            "Server": "AmazonS3",
+            "Last-Modified": "Sat, 19 Sep 2026 17:44:37 GMT",
+            "ETag": "\"b1ab942594bce5e57569cafc8a8bbf6e\"",
+            "Cache-Control": "public, max-age=86400, must-revalidate",
+            "Content-Type": "text/xml",
+            "Content-Disposition": "attachment;filename=repomd.xml",
+            "x-amz-server-side-encryption": "AES256",
+            "Connection": "close"
+          }
+        },
+        "scope": "Latest package-name download still selected previous public release. Exact candidate hashes rejected it before installation. Preserve attempt and retry after metadata advances."
+      },
+      "45": {
+        "status": "failed-stale-metadata-before-regeneration-completed",
+        "evidence": "results/publication-2026-10-11.2/public-fresh-45-metadata-pending-attempt-1",
+        "metadata": {
+          "url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-45-x86_64/repodata/repomd.xml",
+          "fetched_at_unix": 1791762646.9428475,
+          "sha256": "c1d8c69071d7cf60706f598f9ddec31318f66e6872c12e469dc75728db85fd03",
+          "headers": {
+            "x-amz-id-2": "nup0PHdZC4GA2tz7BF2Tywi7klw9a34CbPm0HobifwVEj08UGy3fUrkp4VmnJwP2Dj86LNYakl8=",
+            "x-amz-request-id": "NHMVFANCGCKY5CW5",
+            "Server": "AmazonS3",
+            "Date": "Sun, 11 Oct 2026 23:50:47 GMT",
+            "Last-Modified": "Sat, 19 Sep 2026 17:44:34 GMT",
+            "ETag": "\"1223ca74e1caeaf7f0858ce9f5172f73\"",
+            "x-amz-server-side-encryption": "AES256",
+            "Cache-Control": "public, max-age=86400, must-revalidate",
+            "Content-Disposition": "attachment;filename=repomd.xml",
+            "Accept-Ranges": "bytes",
+            "Content-Type": "text/xml",
+            "Content-Length": "1561",
+            "Connection": "close"
+          }
+        },
+        "scope": "Latest package-name download still selected previous public release. Exact candidate hashes rejected it before installation. Preserve attempt and retry after metadata advances."
+      }
+    },
+    "verified_at": "2026-10-11T23:55:37.365658+00:00",
+    "targets": {
+      "44": {
+        "status": "passed",
+        "public_metadata": {
+          "url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-44-x86_64/repodata/repomd.xml",
+          "fetched_at_unix": 1791762764.2860403,
+          "sha256": "dda77f93b287b1578b67badec8e5a517d64276488b52bd0d647081c19c95a619",
+          "headers": {
+            "x-amz-id-2": "/wi8OXvWbKqaTO3ulo98oZbo1JYq0ZGyG/jbJ7ewPE2bO2HitKQA+MHgYnsT1y6dW1AelEHLt/8=",
+            "x-amz-request-id": "5RMEB11J08F4HPXH",
+            "Server": "AmazonS3",
+            "Date": "Sun, 11 Oct 2026 23:52:45 GMT",
+            "Last-Modified": "Sun, 11 Oct 2026 23:32:08 GMT",
+            "ETag": "\"47d3654f4f278291e23a8254fc165ced\"",
+            "x-amz-server-side-encryption": "AES256",
+            "Cache-Control": "public, max-age=86400, must-revalidate",
+            "Content-Disposition": "attachment;filename=repomd.xml",
+            "Accept-Ranges": "bytes",
+            "Content-Type": "text/xml",
+            "Content-Length": "1562",
+            "Connection": "close"
+          }
+        },
+        "latest_package_names_downloaded_from_fresh_metadata": true,
+        "exact_candidate_hashes": true,
+        "signed_project_rpms": 38,
+        "dependency_check": "passed",
+        "exact_nevra_check": "passed",
+        "unexpected_removals": [],
+        "downgrades": [],
+        "result": "results/publication-2026-10-11.2/public-fresh-44/result.json",
+        "signature_evidence": "results/publication-2026-10-11.2/public-fresh-44/signature-results.json",
+        "after_nevras_sha256": "a856ff5137bf10bee4612f6e2a996305dd2f7acc2391d79acad047e2843c9984"
+      },
+      "45": {
+        "status": "passed",
+        "public_metadata": {
+          "url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-45-x86_64/repodata/repomd.xml",
+          "fetched_at_unix": 1791762765.075047,
+          "sha256": "62952a4cb2562536b824bb6a31042cf3531b2e649538acc369464c61911d8065",
+          "headers": {
+            "x-amz-id-2": "im/LZkMDwE97WeQ8GFhjSQbB8RDaRn76XjTzUgL0UK95WobLS5NxF9WAPfjHVUSitL8dc8HyJFY=",
+            "x-amz-request-id": "AFG0MH2C6ZQ8JBEQ",
+            "Server": "AmazonS3",
+            "Date": "Sun, 11 Oct 2026 23:52:46 GMT",
+            "Last-Modified": "Sun, 11 Oct 2026 23:32:08 GMT",
+            "ETag": "\"f24841c56da8b4e133004e7b6f6ddd76\"",
+            "x-amz-server-side-encryption": "AES256",
+            "Cache-Control": "public, max-age=86400, must-revalidate",
+            "Content-Disposition": "attachment;filename=repomd.xml",
+            "Accept-Ranges": "bytes",
+            "Content-Type": "text/xml",
+            "Content-Length": "1562",
+            "Connection": "close"
+          }
+        },
+        "latest_package_names_downloaded_from_fresh_metadata": true,
+        "exact_candidate_hashes": true,
+        "signed_project_rpms": 38,
+        "dependency_check": "passed",
+        "exact_nevra_check": "passed",
+        "unexpected_removals": [],
+        "downgrades": [],
+        "result": "results/publication-2026-10-11.2/public-fresh-45/result.json",
+        "signature_evidence": "results/publication-2026-10-11.2/public-fresh-45/signature-results.json",
+        "after_nevras_sha256": "2a75ee7388e549676e1c650f1d8388299fd1c9bceba8d5547b39073895d948ba"
+      }
+    },
+    "project_settings_reverified_after_publication": {
+      "manual_publication_enabled": true,
+      "build_networking_enabled": false,
+      "evidence": "results/publication-2026-10-11.2/project-postpublication.json"
+    }
   },
   "security_findings": {
     "fedora_45_system_lua": {
@@ -868,8 +1025,7 @@
     }
   },
   "pending_publication_gates": [
-    "Project-wide pending-build inspection immediately before regeneration",
-    "Fresh public metadata and signed latest-version installs on both targets after authorized regeneration"
+    "Fast-forward qualified release into main, push and verify remote/CI"
   ],
   "fedora_compositor_upgrade": {
     "status": "not-applicable",
@@ -1432,7 +1588,7 @@
   },
   "project_publication_review": {
     "status": "passed",
-    "reviewed_at": "2026-10-11T23:48:16.487592+00:00",
+    "reviewed_at": "2026-10-11T23:50:25.961664+00:00",
     "new_build_ids": [
       11109404,
       11109405,

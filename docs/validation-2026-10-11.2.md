@@ -1,6 +1,6 @@
 # Publication repair, 2026-10-11.2
 
-All candidate gates and project-wide review passed. Authorized repository regeneration and subsequent fresh public metadata verification remain. Targets are Fedora 44 and 45, x86_64. The
+Publication was requested at `2026-10-11T23:50:25.974541+00:00` and fresh public metadata and signed installs were verified on both targets at `2026-10-11T23:55:37.365658+00:00`. Targets are Fedora 44 and 45, x86_64. The
 [release record](../releases/2026-10-11.2.json) contains exact revisions, RPM
 hashes, signatures, transactions, build IDs and evidence paths. This release
 supersedes the blocked Git-only candidate `2026-10-11.1` and upgrades the previous
@@ -104,6 +104,13 @@ session target and handle the chooser during SelectSources, matching the
 verified portal source. Authentication evidence is correlated to test timestamps.
 
 ## Preserved failures and limits
+
+The publication command queues metadata regeneration. The first public checks
+still received previous-release metadata and rejected those downloads before
+installation. Both failed attempts were preserved; after both metadata hashes
+advanced, fresh latest-package downloads and signed install checks were repeated.
+The publication record separates the request time from verification time.
+
 
 The first signed candidate (Lua55 release 3, Hyprland release 6, plugins release
 5) passed builds and container transactions but failed actual VM hook discovery

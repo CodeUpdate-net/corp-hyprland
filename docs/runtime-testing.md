@@ -131,7 +131,9 @@ logs before shutting down the VM. Preserve a failed attempt before retrying;
 remove `/tmp/corp-runtime-started` only to deliberately start a fresh attempt.
 
 The VM run repeats compositor/plugins, wallpaper/capture, idle/resume and PAM
-lock tests. `session.py` also checks the active local logind seat, ownership of
+lock tests. It also renders hyprsysteminfo and runs hyprshutdown with its verified
+`--dry-run --no-exit --no-fork` options, checking Glaze parsing of live compositor
+JSON while preserving the test applications. `session.py` also checks the active local logind seat, ownership of
 the running compositor's loaded Lua library, real hyprpolkitagent cancellation,
 wrong-password denial and successful authentication. A guest-only harmless
 polkit action requests `auth_self`; it does not grant any host privilege.

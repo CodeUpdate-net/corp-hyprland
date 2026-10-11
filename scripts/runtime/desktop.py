@@ -22,6 +22,38 @@ def check_desktop(out, run, ctl, wait_for, processes, passed):
     run('grim', str(out / 'wallpaper.png'))
     passed.append('hyprpaper wallpaper surface maps and screenshot capture succeeds')
 
+    info = launch('hyprsysteminfo', ['hyprsysteminfo'])
+    info_clients = wait_for(lambda: [c for c in json.loads(ctl('-j', 'clients'))
+                                    if c['class'] == 'hyprsysteminfo'],
+                            'System information window did not map')
+    time.sleep(1)
+    assert info.poll() is None
+    (out / 'hyprsysteminfo-clients.json').write_text(json.dumps(info_clients, indent=2))
+    run('grim', str(out / 'hyprsysteminfo.png'))
+    info.terminate()
+    info.wait(timeout=10)
+    passed.append('hyprsysteminfo maps and renders system/compositor information')
+
+    # Verified upstream --dry-run prevents app closure, kill and compositor exit.
+    shutdown = launch('hyprshutdown', ['hyprshutdown', '--dry-run', '--no-exit',
+                                       '--no-fork', '--verbose'])
+    wait_for(lambda: any(layer['namespace'] == 'hyprshutdown'
+                         for output in json.loads(ctl('-j', 'layers')).values()
+                         for layers in output['levels'].values() for layer in layers),
+             'Shutdown dry-run layer did not map')
+    time.sleep(1)
+    assert shutdown.poll() is None
+    shutdown_log = (out / 'hyprshutdown.log').read_text()
+    assert 'Detected config provider: lua' in shutdown_log
+    assert 'Parsed ' in shutdown_log and ' apps from socket' in shutdown_log
+    assert 'Socket returned bad data' not in shutdown_log
+    run('grim', str(out / 'hyprshutdown-dry-run.png'))
+    shutdown.terminate()
+    shutdown.wait(timeout=10)
+    assert any(c['class'] == 'corp-runtime-test' for c in json.loads(ctl('-j', 'clients')))
+    assert paper.poll() is None
+    passed.append('hyprshutdown dry-run parses live compositor JSON, maps and preserves apps')
+
     config = out / 'hypridle.conf'
     config.write_text(f'listener {{\n timeout = 2\n on-timeout = touch {out}/idle-fired\n on-resume = touch {out}/idle-resumed\n}}\n')
     idle = launch('hypridle', ['hypridle', '-c', str(config)])

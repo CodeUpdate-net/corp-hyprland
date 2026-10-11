@@ -26,7 +26,13 @@ Run this for every release, recording exact source revisions and results:
    that all upstream code is free of vulnerabilities.
 7. Run install/upgrade and VM session gates in [operations.md](operations.md).
    Keep signature verification on for COPR artifacts. Freeze the candidate before
-   testing; publish only the exact reviewed builds.
+   testing; publish only the exact reviewed builds. Verify binary and source RPMs
+   in a disposable root with the public COPR key imported. `rpm --checksig --verbose`
+   must report a valid signature from the expected project key fingerprint as
+   well as valid digests; unsigned digest-only success and `NOKEY` do not pass.
+   Compare extracted SRPM archives, specs and included patches/source files to
+   the committed checksums and immutable Git inputs. Inspect source bundles
+   offline as a nonroot user and retain the artifact hashes and verification logs.
 
 On a security incident, freeze publication, preserve evidence and privately
 coordinate with the project owner/upstream. Prepare a patched candidate, rebuild
@@ -111,4 +117,8 @@ arithmetic issue. The candidate backports the upstream production fix and
 updates Glaze to the newest compatible 7.x release. The
 [inventory](../releases/upstream-review-2026-10-11.json) records exact revisions,
 source checks and the missing upstream GC fix in Fedora 45 system Lua. The
-signed source-bundle inspection is recorded as a publication blocker.
+signed Fedora source-bundle inspection was a blocker for `2026-10-11.1`.
+The [publication repair](validation-2026-10-11.2.md) selects the fixed parallel
+Lua runtime on both targets and rebuilds the compositor and exact-pinned plugins.
+Its release record tracks the separate build, signature, upgrade and full-session
+validation gates; Fedora's system Lua remains unchanged for other applications.

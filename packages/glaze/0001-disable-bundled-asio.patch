@@ -1,0 +1,17 @@
+Subject: [PATCH] Default the installed Asio selector to system dependencies
+
+The installed CMake module can otherwise download source when a networking
+consumer calls glaze_setup_asio(). Distro consumers should use system Asio
+or Boost, and opt in explicitly if they want upstream's download behavior.
+
+--- a/cmake/glaze-asio.cmake
++++ b/cmake/glaze-asio.cmake
+@@ -30,7 +30,7 @@
+ 
+ option(glaze_USE_BUNDLED_ASIO
+     "Download Asio via FetchContent if no system Asio/Boost is found (disable for distro builds)"
+-    ON
++    OFF
+ )
+ 
+ function(glaze_setup_asio)

@@ -1,6 +1,6 @@
 Name:           lua55
 Version:        5.5.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Parallel-installable Lua 5.5 runtime for Hyprland
 License:        MIT
 URL:            https://github.com/lua/lua
@@ -8,6 +8,8 @@ Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz#/%{name}-%{version}.
 Source1:        lua55.pc.in
 Source2:        lua.hpp
 Source3:        LICENSE
+Source4:        gc-smoke.lua
+Patch0:         0001-guard-negative-gc-parameter.patch
 
 BuildRequires:  gcc
 BuildRequires:  make
@@ -58,6 +60,7 @@ sed -e 's|@LIBDIR@|%{_libdir}|g' \
 
 %check
 ./lua -e 'assert(_VERSION == "Lua 5.5")'
+./lua %{SOURCE4}
 
 %files
 %license LICENSE
@@ -70,6 +73,10 @@ sed -e 's|@LIBDIR@|%{_libdir}|g' \
 %{_libdir}/pkgconfig/lua55.pc
 
 %changelog
+* Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 5.5.1-2
+- Backport upstream 0b29f408 to guard negative GC memory deltas
+- Check ordinary incremental and generational GC behavior
+
 * Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 5.5.1-1
 - Update to Lua 5.5.1
 

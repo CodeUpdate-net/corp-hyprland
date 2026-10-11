@@ -68,3 +68,23 @@ that arbitrary build scripts or upstream source are harmless.
 Do not drop these patches solely because an upstream version changes. Check
 whether the underlying fixes landed upstream, rerun the regression tests, and
 record the upstream commit that supersedes each downstream patch.
+
+## Candidate 2026-10-11.1
+
+Lua 5.5.1-2 backports the production hunks from upstream
+[`0b29f408`](https://github.com/lua/lua/commit/0b29f408433e92953cc72b1d3e06c7ac8139e439).
+The GC major/minor transition now guards negative memory deltas before parameter
+arithmetic. An assertion documents the arithmetic function's precondition.
+The ordinary GC smoke check does not reproduce the reported flaw. Fedora 45's
+Hyprland uses system Lua, so this lua55 patch alone does not establish coverage
+of that compositor's runtime. Signed Fedora source inspection confirmed the
+missing upstream guard in `lua-5.5.1-2.fc45`; remediation is required before
+publication.
+
+Glaze 7.9.1-1 defaults the installed optional Asio download selector to OFF.
+It can resolve system Boost/Asio when called, or fail when none is available.
+This avoids an implicit FetchContent download in downstream distro builds.
+It is a packaging safeguard, not a networking runtime security certification.
+
+See [the current review](validation-2026-10-11.md) for source checks, upstream
+parser/file-handling fixes, rebuild scope and validation limitations.

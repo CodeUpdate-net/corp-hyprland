@@ -1,6 +1,6 @@
 Name:           hyprshutdown
 Version:        0.1.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Graceful shutdown utility for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprshutdown
@@ -36,6 +36,9 @@ Hyprshutdown presents a graceful logout and shutdown interface for Hyprland.
 %{_bindir}/hyprshutdown
 
 %changelog
+* Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 0.1.1-3
+- Rebuild with Glaze 7.9.1
+
 * Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.1.1-2
 - Rebuild against hyprtoolkit 0.6.0 (SOVERSION 5 -> 6)
 

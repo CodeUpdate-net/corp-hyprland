@@ -101,3 +101,14 @@ reported bugs for 5.5.1 when checked. No applicable published upstream advisory
 was found in these sources. This is a review of public upstream advisories,
 not an exhaustive CVE database correlation or a source-code security proof;
 private/unreported flaws and Fedora dependency advisories are outside its scope.
+
+## Upstream review on 2026-10-11
+
+The [new review](validation-2026-10-11.md) covers all 29 manifest repositories
+and the separate libsecret stable index. The GitHub public advisory endpoints
+again returned empty lists, but Lua's official bugs page identifies a 5.5.1 GC
+arithmetic issue. The candidate backports the upstream production fix and
+updates Glaze to the newest compatible 7.x release. The
+[inventory](../releases/upstream-review-2026-10-11.json) records exact revisions,
+source checks and the missing upstream GC fix in Fedora 45 system Lua. The
+signed source-bundle inspection is recorded as a publication blocker.

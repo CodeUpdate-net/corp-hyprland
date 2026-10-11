@@ -1,6 +1,6 @@
 Name:           hyprsysteminfo
 Version:        0.2.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        System information utility for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprsysteminfo
@@ -38,6 +38,9 @@ Hyprsysteminfo displays compositor, graphics, and system information.
 %{_datadir}/applications/hyprsysteminfo.desktop
 
 %changelog
+* Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 0.2.0-3
+- Rebuild with Glaze 7.9.1
+
 * Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.2.0-2
 - Rebuild against hyprtoolkit 0.6.0 (SOVERSION 5 -> 6)
 

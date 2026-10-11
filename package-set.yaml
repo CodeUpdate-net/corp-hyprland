@@ -1,14 +1,14 @@
 schema: 1
-release_set: "2026-09-19.1"
+release_set: "2026-10-11.1"
 
 packages:
   glaze:
     upstream: https://github.com/stephenberry/glaze
     # Held on 7.x: Hyprland 0.56.2 requires find_package(glaze 7...<8) and
     # falls back to a networked FetchContent when no in-range glaze is found.
-    version: "7.2.0"
-    source_commit: "b518eec7a22e56ffa238b072c07f47efa7cea97f"
-    source_sha256: "17dba19ae63ae48f94994f00d49d5cb3c8f1306db1046c534c4828662490b7d4"
+    version: "7.9.1"
+    source_commit: "cadcadea26554cc4214769e358f981426e40a02a"
+    source_sha256: "d6dee391276f5375672c35d06058e4fd8f1f30f62bae163a004b3bd13a4e2ae3"
     tier: compatibility
     depends_on: []
   lua55:

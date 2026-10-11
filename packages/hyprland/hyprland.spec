@@ -1,6 +1,6 @@
 Name:           hyprland
 Version:        0.56.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Dynamic tiling Wayland compositor
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/Hyprland
@@ -123,6 +123,9 @@ sed -i '/^Requires:/ s/$/, libeis-1.0, lua >= 5.5/' \
 %{_datadir}/pkgconfig/hyprland.pc
 
 %changelog
+* Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-5
+- Rebuild with Glaze 7.9.1 and, on Fedora 44, the patched parallel Lua runtime
+
 * Fri Sep 18 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-4
 - Rebuild against aquamarine 0.15.1, hyprutils 0.14.2, hyprland-protocols 0.7.1, and Lua 5.5.1
 - Cap glaze below 8, matching upstream find_package(glaze 7...<8); without the cap an out-of-range glaze silently falls back to a networked FetchContent

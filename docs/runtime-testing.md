@@ -103,3 +103,41 @@ coverage above. Full portal/polkit, login/suspend and hardware qualification
 remain follow-up coverage for the inherited stack; they are not represented as
 completed by the nested test. The compositor, portal, locker and polkit RPMs
 are unchanged by this release.
+
+
+## Full-session qualification in disposable VMs
+
+When the compositor or its Lua runtime changes, the nested container coverage
+alone does not cover portal/PipeWire or polkit integration. Use task-created
+Fedora 44 and 45 x86_64 VMs with an isolated qcow2 overlay, a virtual GPU and a
+real PAM/logind seat. Verify the official cloud image against Fedora's signed
+checksum manifest before booting; see [Fedora's image verification instructions](https://fedoraproject.org/cloud/download/).
+A separate test SSH key and a localhost-only forwarded port can control each
+VM. Never mount the host home, credentials or desktop bus into the guest.
+
+Create `/etc/corp-test-vm` only in that disposable guest, with a `corp-test`
+account using the existing test-only password `corp-runtime-only`. Prepare
+runtime dependencies using `scripts/runtime/prepare-vm.sh`. Install every exact
+signed candidate runtime/devel RPM, compare installed NEVRAs and run `dnf check`
+before starting desktop tests. Copy `scripts/runtime/` into `/opt/corp-test/`.
+The VM scripts require both the marker and `systemd-detect-virt --vm`.
+
+Run `bash /opt/corp-test/start-vm-session.sh` as root inside the guest. It starts
+a single test run through a real tty1 PAM login. Its guest-only firewall keeps
+loopback and the private SSH control channel while blocking runtime internet
+access. It does not change host networking or the user's desktop. Collect
+`/tmp/runtime-evidence`, `/tmp/corp-session-test.log` and relevant guest journal
+logs before shutting down the VM. Preserve a failed attempt before retrying;
+remove `/tmp/corp-runtime-started` only to deliberately start a fresh attempt.
+
+The VM run repeats compositor/plugins, wallpaper/capture, idle/resume and PAM
+lock tests. `session.py` also checks the active local logind seat, ownership of
+the running compositor's loaded Lua library, real hyprpolkitagent cancellation,
+wrong-password denial and successful authentication. A guest-only harmless
+polkit action requests `auth_self`; it does not grant any host privilege.
+The portal test exercises the packaged screen chooser, ScreenCast session,
+OpenPipeWireRemote and three actual screen frames through GStreamer, following
+[the portal API](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.ScreenCast.html).
+Record the actual per-release results; this procedure's availability is not a
+pass. Virtual GPU coverage does not establish physical GPU, HDR, multi-monitor,
+suspend/resume or game-specific Vulkan behavior.

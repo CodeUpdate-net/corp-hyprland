@@ -95,7 +95,12 @@ For each target, in disposable roots or VMs:
 - Install every produced runtime and devel package; compare `rpm -q` NEVRAs to
   the release record so Fedora or an older COPR build cannot mask a missing RPM.
 - Upgrade from Fedora's Hyprland packages and from the previous public release.
-  Inspect the transaction for unintended removals or downgrades.
+  First query the target's native Fedora repositories. If Fedora does not ship
+  the compositor on that target, record that compositor origin as not applicable
+  with the fresh query evidence; test migration from all available Fedora Hypr
+  libraries/devel packages and system Lua instead. Do not claim a compositor
+  upgrade that could not be run. Inspect transactions for unintended removals
+  or downgrades.
 - Review RPM Provides, Requires, file permissions, scripts and licenses. Keep
   COPR signature checks enabled.
 - Run safe version/help commands. Launch a nested/VM Hyprland session and test

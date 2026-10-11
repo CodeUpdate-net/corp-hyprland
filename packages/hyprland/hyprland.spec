@@ -1,6 +1,6 @@
 Name:           hyprland
 Version:        0.56.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Dynamic tiling Wayland compositor
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/Hyprland
@@ -28,11 +28,8 @@ BuildRequires:  pkgconfig(lcms2)
 BuildRequires:  pkgconfig(libeis-1.0)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libinput) >= 1.29
-%if 0%{?fedora} < 45
+BuildRequires:  lua55-devel >= 5.5.1-3%{?dist}
 BuildRequires:  pkgconfig(lua55) >= 5.5
-%else
-BuildRequires:  pkgconfig(lua) >= 5.5
-%endif
 BuildRequires:  pkgconfig(muparser)
 BuildRequires:  pkgconfig(pango)
 BuildRequires:  pkgconfig(pangocairo)
@@ -56,6 +53,7 @@ BuildRequires:  pkgconfig(xcursor)
 BuildRequires:  pkgconfig(xkbcommon) >= 1.11
 BuildRequires:  hyprwayland-scanner-devel >= 0.3.10
 BuildRequires:  systemd-rpm-macros
+Requires:       lua55%{?_isa} >= 5.5.1-3%{?dist}
 Requires:       xorg-x11-server-Xwayland
 Recommends:     uwsm >= 0.26.7
 Recommends:     xdg-desktop-portal-hyprland
@@ -67,6 +65,7 @@ extensive configuration support.
 %package devel
 Summary:        Development files for Hyprland plugins
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       lua55-devel%{?_isa} >= 5.5.1-3%{?dist}
 Requires:       glslang-devel
 Requires:       pkgconfig(libeis-1.0)
 
@@ -89,13 +88,8 @@ export GIT_TAG=v%{version}
 
 %install
 %cmake_install
-%if 0%{?fedora} < 45
 sed -i '/^Requires:/ s/$/, libeis-1.0, lua55 >= 5.5/' \
   %{buildroot}%{_datadir}/pkgconfig/hyprland.pc
-%else
-sed -i '/^Requires:/ s/$/, libeis-1.0, lua >= 5.5/' \
-  %{buildroot}%{_datadir}/pkgconfig/hyprland.pc
-%endif
 
 %files
 %license LICENSE
@@ -123,6 +117,10 @@ sed -i '/^Requires:/ s/$/, libeis-1.0, lua >= 5.5/' \
 %{_datadir}/pkgconfig/hyprland.pc
 
 %changelog
+* Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-6
+- Use the patched parallel Lua runtime on both Fedora 44 and 45
+- Require the validated fixed Lua RPM release for build and runtime dependencies
+
 * Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-5
 - Rebuild with Glaze 7.9.1 and, on Fedora 44, the patched parallel Lua runtime
 

@@ -7,12 +7,17 @@ import subprocess
 import shutil
 import time
 
-if not Path('/run/.containerenv').exists():
-    raise SystemExit('This test must run in a disposable Podman container.')
+vm_mode = os.environ.get('CORP_NATIVE_VM') == '1'
+if vm_mode:
+    if not Path('/etc/corp-test-vm').exists():
+        raise SystemExit('A task-created disposable VM marker is required.')
+    subprocess.run(['systemd-detect-virt', '--vm'], check=True, capture_output=True)
+elif not Path('/run/.containerenv').exists():
+    raise SystemExit('This test must run in a disposable Podman container or test VM.')
 
 out = Path('/tmp/runtime-evidence')
 out.mkdir(exist_ok=True)
-runtime = Path('/tmp/corp-runtime')
+runtime = Path(os.environ['XDG_RUNTIME_DIR']) if vm_mode else Path('/tmp/corp-runtime')
 runtime.mkdir(mode=0o700, exist_ok=True)
 os.environ['XDG_RUNTIME_DIR'] = str(runtime)
 os.environ['XDG_CURRENT_DESKTOP'] = 'Hyprland'
@@ -54,15 +59,15 @@ compositor = subprocess.Popen(['Hyprland', '--config', str(config)], stdout=log,
 try:
     instance = wait_for(lambda: next((p for p in runtime.glob('hypr/*') if (p / '.socket.sock').exists()), None), 'No compositor IPC socket')
     os.environ['HYPRLAND_INSTANCE_SIGNATURE'] = instance.name
-    monitors = wait_for(lambda: json.loads(ctl('-j', 'monitors')), 'No nested output')
+    monitors = wait_for(lambda: json.loads(ctl('-j', 'monitors')), 'No compositor output')
     (out / 'monitors.json').write_text(json.dumps(monitors, indent=2))
     instances = json.loads(ctl('-j', 'instances'))
     own = next(i for i in instances if i['instance'] == instance.name)
     os.environ['WAYLAND_DISPLAY'] = own['wl_socket']
     assert not ctl('configerrors').strip(), 'Configuration errors'
-    passed.append('nested compositor startup, output and Lua configuration')
+    passed.append(('native VM' if vm_mode else 'nested') + ' compositor startup, output and Lua configuration')
     footlog = (out / 'foot.log').open('w')
-    client = subprocess.Popen(['foot', '--app-id=corp-runtime-test', 'sh', '-c', 'printf "COPR runtime test\\n"; sleep 300'], stdout=footlog, stderr=subprocess.STDOUT)
+    client = subprocess.Popen(['foot', '--app-id=corp-runtime-test', 'sh', '-c', 'printf "COPR runtime test\\n"; sleep 900'], stdout=footlog, stderr=subprocess.STDOUT)
     processes.append(client)
     clients = wait_for(lambda: [c for c in json.loads(ctl('-j', 'clients')) if c['class'] == 'corp-runtime-test'], 'Wayland client did not map')
     address = clients[0]['address']
@@ -91,6 +96,10 @@ try:
     if os.environ.get('CORP_DESKTOP_TESTS') == '1':
         from desktop import check_desktop
         check_desktop(out, run, ctl, wait_for, processes, passed)
+    if os.environ.get('CORP_SESSION_TESTS') == '1':
+        assert vm_mode, 'Session tests require a disposable VM'
+        from session import check_session
+        check_session(out, run, ctl, wait_for, processes, passed)
     (out / 'rolling.log').write_text(ctl('rollinglog'))
     (out / 'result.json').write_text(json.dumps({'status': 'passed', 'tests': passed}, indent=2))
 except Exception as error:

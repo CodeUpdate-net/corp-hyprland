@@ -1,6 +1,6 @@
 Name:           lua55
 Version:        5.5.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Parallel-installable Lua 5.5 runtime for Hyprland
 License:        MIT
 URL:            https://github.com/lua/lua
@@ -16,7 +16,8 @@ BuildRequires:  make
 
 %description
 Lua 5.5 runtime packaged under a versioned library name for Fedora releases
-whose system Lua is older. This package does not replace the system Lua.
+that need a separately maintained Lua runtime. This package does not replace
+the system Lua.
 
 %package devel
 Summary:        Development files for the parallel Lua 5.5 runtime
@@ -73,6 +74,9 @@ sed -e 's|@LIBDIR@|%{_libdir}|g' \
 %{_libdir}/pkgconfig/lua55.pc
 
 %changelog
+* Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 5.5.1-3
+- Support the patched parallel runtime on both Fedora targets
+
 * Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 5.5.1-2
 - Backport upstream 0b29f408 to guard negative GC memory deltas
 - Check ordinary incremental and generational GC behavior

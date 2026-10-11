@@ -20,9 +20,11 @@ libsecret is maintained separately in `dtutila/utils`.
    release record. A successful source build alone is insufficient.
 5. Review the diff and CI results, then commit to `release-set/<id>` and push.
 
-Assign a new `release_set` before submitting a new candidate. The audit-fix
-candidate is `2026-09-19.1`, following public release `2026-09-18.1`. Track its
-source commit, build IDs and publication state in `releases/`.
+Assign a new `release_set` before submitting a new candidate. Read the current
+candidate ID from `package-set.yaml` and the previous public release from its
+`releases/<release-set>.json` record. Track immutable source commits, exact build
+IDs and publication state in that record; a candidate ID alone does not mean
+its packages are public.
 
 ## GitHub identity
 

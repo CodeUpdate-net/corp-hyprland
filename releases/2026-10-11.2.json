@@ -3,7 +3,7 @@
   "release_set": "2026-10-11.2",
   "previous_release_set": "2026-09-19.1",
   "supersedes_candidate": "2026-10-11.1",
-  "status": "full-local-gates-passed-copr-rebuild-pending",
+  "status": "qualified-authorized-for-regeneration",
   "project": "dtutila/hyprland",
   "source_repository": "https://github.com/CodeUpdate-net/corp-hyprland.git",
   "source_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d",
@@ -31,7 +31,7 @@
       "release": "4%{?dist}",
       "source_commit": "7579fc9d7ed90240487251dfb69168f8e64e9294",
       "source_sha256": "ffed0b0e2987e66b0142491b26c63170ffd2d86e425ff3703799f4933fd91810",
-      "build_id": null,
+      "build_id": 11109682,
       "changed": true,
       "inherited": false,
       "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d"
@@ -140,7 +140,7 @@
       "release": "7%{?dist}",
       "source_commit": "efb50993780079460b0cbed1363e2166a2de1d9f",
       "source_sha256": "ddeb92a654fa65d41ed2add3176de4fe54eab3752441c33ca99f5e598e0571e5",
-      "build_id": null,
+      "build_id": 11109690,
       "changed": true,
       "inherited": false,
       "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d"
@@ -150,7 +150,7 @@
       "release": "6%{?dist}",
       "source_commit": "7644cecdb947060682891a0db2a0cdc5c0b9e704",
       "source_sha256": "9520567c1ba01add35b008db4160c6b9bba09fa65a16c09aa4fd71bca692e525",
-      "build_id": null,
+      "build_id": 11109743,
       "changed": true,
       "inherited": false,
       "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d"
@@ -830,10 +830,13 @@
   "builds": {
     "glaze": 11109404,
     "hyprshutdown": 11109410,
-    "hyprsysteminfo": 11109411
+    "hyprsysteminfo": 11109411,
+    "lua55": 11109682,
+    "hyprland": 11109690,
+    "hyprland-plugins": 11109743
   },
   "publication": {
-    "status": "authorized-rebuild-validation-pending",
+    "status": "qualified-authorized-for-regeneration",
     "manual_publication_enabled": true,
     "build_networking_enabled": false
   },
@@ -841,7 +844,7 @@
     "fedora_45_system_lua": {
       "original_candidate_finding": "releases/2026-10-11.1.json",
       "remediation": "Hyprland selects patched lua55 >= 5.5.1-4 on both targets. Private public C symbol names and SONAME liblua5.5.so.1 prevent interposition on native Lua used by libinput. Native Fedora Lua remains unchanged.",
-      "status": "targeted-builds-passed-full-qualification-pending",
+      "status": "configuration-runtime-remediated-signed-vm-verified-native-system-runtime-unchanged",
       "inherited_runtime_scope": {
         "native_package": "lua-libs-5.5.1-2.fc45.x86_64",
         "status": "inherited-system-runtime-unpatched",
@@ -860,17 +863,13 @@
       ],
       "finding": "Original parallel Lua exported unversioned native API names. Actual forced loader bindings showed libinput resolving its native API to parallel Lua, including a Lua 5.4/5.5 ABI collision on Fedora 44.",
       "remediation": "Prefix all 157 public API exports; installed headers map source API names to private names; bump SONAME to 1 and rebuild Hyprland/plugins.",
-      "status": "targeted mixed-runtime tests pass in both loader orders on both targets; signed VM bindings pending",
+      "status": "resolved-signed-vm-bindings-verified-on-both-targets",
       "public_api_prefix_review": "results/publication-2026-10-11.2/lua-prefix-review.json"
     }
   },
   "pending_publication_gates": [
-    "Both fresh full Podman builds and repository checks",
-    "Updated compositor/plugin clean COPR builds on both targets",
-    "Signed exact-candidate inspection, install and upgrade gates on both targets",
-    "Desktop/plugin and portal/polkit runtime qualification",
-    "Project-wide pending-build inspection",
-    "Fresh signed public installs and metadata verification after authorized regeneration"
+    "Project-wide pending-build inspection immediately before regeneration",
+    "Fresh public metadata and signed latest-version installs on both targets after authorized regeneration"
   ],
   "fedora_compositor_upgrade": {
     "status": "not-applicable",
@@ -880,14 +879,192 @@
       "results/publication-2026-10-11.2/fedora-baseline-45.log"
     ]
   },
-  "build_scope": "All 29 packages freshly built with Podman on both targets for isolated-Lua inputs. Six changed recipes have clean COPR Mock qualification planned on both targets: three reused byte-identical recipes and three new Lua55/Hyprland/plugin builds. Other 23 exact signed builds inherit the previous public release.",
+  "build_scope": "All 29 packages freshly built offline and nonroot with Podman on both targets for final isolated-Lua inputs. Six changed recipes passed 12 actual clean COPR Mock builds: three byte-identical reused recipes and three final Lua55/Hyprland/plugin rebuilds. Other 23 exact signed builds inherited from the previous public release.",
   "copr_validation": {
-    "status": "rebuild-pending",
-    "unchanged_recipe_builds_reused": {
-      "glaze": 11109404,
-      "hyprshutdown": 11109410,
-      "hyprsysteminfo": 11109411
-    }
+    "status": "passed",
+    "clean_binary_builds": 12,
+    "scope": "Actual clean COPR Mock builds of six changed recipes on both targets. Lua55/Hyprland/plugins rebuilt from final immutable source commit; Glaze/shutdown/systeminfo reuse their byte-identical earlier recipe builds. No separate native Mock run claimed.",
+    "manual_mode": true,
+    "build_networking": false,
+    "builds": [
+      {
+        "package": "glaze",
+        "build_id": 11109404,
+        "recipe_commit": "91d51a517c713dfa6b09812ebe7f9aa2462166b6",
+        "chroot": "fedora-44-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791752391.948264",
+        "dependency_selection": [],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-44-x86_64/11109404-glaze/",
+        "configuration_sha256": "5bc41b2880ab03e14cc7d1ee2c009133ac2c0b54aaefe92124b8e3329776a33c"
+      },
+      {
+        "package": "glaze",
+        "build_id": 11109404,
+        "recipe_commit": "91d51a517c713dfa6b09812ebe7f9aa2462166b6",
+        "chroot": "fedora-45-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791752392.551340",
+        "dependency_selection": [],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-45-x86_64/11109404-glaze/",
+        "configuration_sha256": "28e1912ac068ad39d91c8b914bc4139b8bc1ea2efdb9ef334ddcd5d359094448"
+      },
+      {
+        "package": "hyprshutdown",
+        "build_id": 11109410,
+        "recipe_commit": "91d51a517c713dfa6b09812ebe7f9aa2462166b6",
+        "chroot": "fedora-44-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791752634.399739",
+        "dependency_selection": [
+          "glaze-devel                noarch 0:7.9.1-1.fc44               copr_base_devel   4.1 MiB"
+        ],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-44-x86_64/11109410-hyprshutdown/",
+        "configuration_sha256": "4d3b77f9bd7bbcd0b4721b6a3028d7287b20203935d7a4a24ddc9b12de2ba07b"
+      },
+      {
+        "package": "hyprshutdown",
+        "build_id": 11109410,
+        "recipe_commit": "91d51a517c713dfa6b09812ebe7f9aa2462166b6",
+        "chroot": "fedora-45-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791752634.368391",
+        "dependency_selection": [
+          "glaze-devel                noarch 0:7.9.1-1.fc45            copr_base_devel   4.1 MiB"
+        ],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-45-x86_64/11109410-hyprshutdown/",
+        "configuration_sha256": "dca3f865f39627c681406801eb2c3d0298acea47bdc46bc2385fe1046407a8c1"
+      },
+      {
+        "package": "hyprsysteminfo",
+        "build_id": 11109411,
+        "recipe_commit": "91d51a517c713dfa6b09812ebe7f9aa2462166b6",
+        "chroot": "fedora-44-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791752655.057631",
+        "dependency_selection": [
+          "glaze-devel                noarch 0:7.9.1-1.fc44               copr_base_devel   4.1 MiB"
+        ],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-44-x86_64/11109411-hyprsysteminfo/",
+        "configuration_sha256": "1d2ada07eaaff83125fc44e79492885df42d4d220aec20c94f20b64971e35cfb"
+      },
+      {
+        "package": "hyprsysteminfo",
+        "build_id": 11109411,
+        "recipe_commit": "91d51a517c713dfa6b09812ebe7f9aa2462166b6",
+        "chroot": "fedora-45-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791752654.363317",
+        "dependency_selection": [
+          "glaze-devel                noarch 0:7.9.1-1.fc45            copr_base_devel   4.1 MiB"
+        ],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-45-x86_64/11109411-hyprsysteminfo/",
+        "configuration_sha256": "2c20b36bd543882ad77a349015bac8dd30cde3abd08d5727edc82f6daaa57dab"
+      },
+      {
+        "package": "lua55",
+        "build_id": 11109682,
+        "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d",
+        "chroot": "fedora-44-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791759589.438106",
+        "dependency_selection": [],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-44-x86_64/11109682-lua55/",
+        "configuration_sha256": "07bcefa0ac7191a49eb23bf39ee40eb3a0bb578b34fcaba31386057d03a54386"
+      },
+      {
+        "package": "lua55",
+        "build_id": 11109682,
+        "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d",
+        "chroot": "fedora-45-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791759588.987814",
+        "dependency_selection": [],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-45-x86_64/11109682-lua55/",
+        "configuration_sha256": "5aa313f1fd05ee1cd120f10650e756ea8520df02fb9cd1d18570fd122e9996dd"
+      },
+      {
+        "package": "hyprland",
+        "build_id": 11109690,
+        "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d",
+        "chroot": "fedora-44-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791759792.586714",
+        "dependency_selection": [
+          "lua55-devel                x86_64 0:5.5.1-4.fc44               copr_base_devel  52.7 KiB",
+          "glaze-devel                noarch 0:7.9.1-1.fc44               copr_base_devel   4.1 MiB"
+        ],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-44-x86_64/11109690-hyprland/",
+        "configuration_sha256": "a1b35406a58a001a3bea04e050797a45f44691ee516ec356b360ad11f7681f63"
+      },
+      {
+        "package": "hyprland",
+        "build_id": 11109690,
+        "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d",
+        "chroot": "fedora-45-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791759792.576257",
+        "dependency_selection": [
+          "lua55-devel                x86_64 0:5.5.1-4.fc45            copr_base_devel  52.7 KiB",
+          "glaze-devel                noarch 0:7.9.1-1.fc45            copr_base_devel   4.1 MiB"
+        ],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-45-x86_64/11109690-hyprland/",
+        "configuration_sha256": "36fddd9f6cc227ef21ae4674e0a76c8149497fdb1ea53c576e9e0dbbc74737fa"
+      },
+      {
+        "package": "hyprland-plugins",
+        "build_id": 11109743,
+        "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d",
+        "chroot": "fedora-44-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791761444.587458",
+        "dependency_selection": [
+          "hyprland-devel             x86_64 0:0.56.2-7.fc44              copr_base_devel   1.5 MiB",
+          "lua55-devel                x86_64 0:5.5.1-4.fc44               copr_base_devel  52.7 KiB"
+        ],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-44-x86_64/11109743-hyprland-plugins/",
+        "configuration_sha256": "ecd8170bf5470999fe69438468e20ec4a0aad803a44b63b277ed6a5cbde0225e"
+      },
+      {
+        "package": "hyprland-plugins",
+        "build_id": 11109743,
+        "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d",
+        "chroot": "fedora-45-x86_64",
+        "status": "passed",
+        "binary_build_networking": false,
+        "fresh_mock_root": true,
+        "mock_uniqueext": "1791761444.654429",
+        "dependency_selection": [
+          "hyprland-devel             x86_64 0:0.56.2-7.fc45           copr_base_devel   1.5 MiB",
+          "lua55-devel                x86_64 0:5.5.1-4.fc45            copr_base_devel  52.7 KiB"
+        ],
+        "result_url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/fedora-45-x86_64/11109743-hyprland-plugins/",
+        "configuration_sha256": "868b8e288f5b14fe60a13202c8ea3a87abf9ded4fe3cdb5ada9d11c93b40c384"
+      }
+    ],
+    "managed_buildroot_signature_scope": "COPR dependency installation uses its managed Mock policy; dependency logs can contain NOKEY warnings. Final candidate signature/install checks independently require the full project fingerprint and no NOKEY."
   },
   "rejected_candidate_attempts": [
     "releases/2026-10-11.2-attempt-1.json"
@@ -929,5 +1106,385 @@
       "Verified portal1.4.1 opens picker in SelectSources, so choose there before Start."
     ],
     "visual_review": "Fedora44 real monitor picker and Fedora45 wrong-password Authentication failed screenshots inspected."
+  },
+  "signed_candidate_validation": {
+    "status": "passed",
+    "project_key": {
+      "url": "https://download.copr.fedorainfracloud.org/results/dtutila/hyprland/pubkey.gpg",
+      "sha256": "0acf93f79fa90b0e6ad62bc61b6b1a543cbdedd05649f0d6fbdf93369aebad44",
+      "fingerprints": [
+        "0172D569420212CE7D0D93E2EB8806A8E4BB2A44"
+      ],
+      "scope": "Official HTTPS project repository configuration; imported only in disposable validation roots."
+    },
+    "targets": {
+      "fedora-44": {
+        "status": "passed",
+        "binary_signatures": 89,
+        "source_signatures": 29,
+        "verified_srpm_bundles": 29,
+        "rpm_metadata_inspected": 38,
+        "permission_anomalies": 0,
+        "new_scriptlets": 0,
+        "artifact_inventory": "results/publication-2026-10-11.2/candidate-flat-44/artifact-inventory.json",
+        "artifact_inventory_sha256": "e9a623ee76d7974ba055119101b0c27683b55cc477c6cb6b5a1f7b57d713c401",
+        "signatures": "results/publication-2026-10-11.2/candidate-fresh-44/signature-results.json",
+        "source_signature_evidence": "results/publication-2026-10-11.2/candidate-fresh-44/source-signature-results.json",
+        "source_inspection": "results/publication-2026-10-11.2/candidate-source-44/result.json",
+        "signed_metadata_comparison": {
+          "status": "passed",
+          "packages_inspected": 38,
+          "permission_anomalies": 0,
+          "new_scriptlets": 0,
+          "metadata_differences": [
+            {
+              "name": "hyprland-qt-support",
+              "field": "requires",
+              "added": [
+                "libQt6Core.so.6(Qt_6.11_PRIVATE_API)(64bit)"
+              ],
+              "removed": []
+            }
+          ],
+          "difference_scope": "Inherited Qt support build requires nativeQt6.11 privateABI; exact signed install/upgrade closure and actual GUI tests independently required."
+        },
+        "install_upgrade_cases": {
+          "fresh": {
+            "status": "passed",
+            "exact_runtime_devel_packages": 38,
+            "unexpected_removals": [],
+            "downgrades": [],
+            "system_lua_before": null,
+            "system_lua_after": null,
+            "result": "results/publication-2026-10-11.2/candidate-fresh-44/result.json",
+            "before_nevras_sha256": "c12f53453eb81bca96b2e9c2cd935c1083f82b5bb00a3e9a224284b9a8f3696b",
+            "after_nevras_sha256": "a856ff5137bf10bee4612f6e2a996305dd2f7acc2391d79acad047e2843c9984"
+          },
+          "previous": {
+            "status": "passed",
+            "exact_runtime_devel_packages": 38,
+            "unexpected_removals": [],
+            "downgrades": [],
+            "system_lua_before": null,
+            "system_lua_after": null,
+            "result": "results/publication-2026-10-11.2/candidate-previous-44/result.json",
+            "before_nevras_sha256": "48935b8b0ba7b321b4102b9179008e9f7c7bf16ef06dddb56160565fa60cda79",
+            "after_nevras_sha256": "a856ff5137bf10bee4612f6e2a996305dd2f7acc2391d79acad047e2843c9984"
+          },
+          "fedora": {
+            "status": "passed",
+            "exact_runtime_devel_packages": 38,
+            "unexpected_removals": [],
+            "downgrades": [],
+            "system_lua_before": [
+              "0",
+              "5.4.8",
+              "5.fc44"
+            ],
+            "system_lua_after": [
+              "0",
+              "5.4.8",
+              "5.fc44"
+            ],
+            "result": "results/publication-2026-10-11.2/candidate-fedora-44/result.json",
+            "before_nevras_sha256": "25f082fc01f8591dd2c038e4d3d9fb9c0fea411f1fee6d838f7bfd4104b71210",
+            "after_nevras_sha256": "7fff19263d218d92627c05594309ab33752cb4639758739e959ed8920172b6a7"
+          },
+          "minimal": {
+            "status": "passed",
+            "exact_runtime_devel_packages": 38,
+            "unexpected_removals": [],
+            "downgrades": [],
+            "system_lua_before": null,
+            "system_lua_after": null,
+            "result": "results/publication-2026-10-11.2/candidate-minimal-44/result.json",
+            "before_nevras_sha256": "03b7dffccc534d25d5dda250e2a6591b9afa1ef1a28e76101e402e3b1113208c",
+            "after_nevras_sha256": "708c99832e8258f1af355d9e4be02f6099185304b536a579ef5ae53dd0bc9309",
+            "nm_automatically_installed_owner": "binutils-2.46.1-1.fc44.x86_64",
+            "preinstall_nm_absent": true
+          }
+        },
+        "latest_development_metadata_install": "results/publication-2026-10-11.2/development-fresh-44/result.json"
+      },
+      "fedora-45": {
+        "status": "passed",
+        "binary_signatures": 89,
+        "source_signatures": 29,
+        "verified_srpm_bundles": 29,
+        "rpm_metadata_inspected": 38,
+        "permission_anomalies": 0,
+        "new_scriptlets": 0,
+        "artifact_inventory": "results/publication-2026-10-11.2/candidate-flat-45/artifact-inventory.json",
+        "artifact_inventory_sha256": "87acd07694290cbec8f453d2e121d7db992007d22a860a4beb5da5949ec13cef",
+        "signatures": "results/publication-2026-10-11.2/candidate-fresh-45/signature-results.json",
+        "source_signature_evidence": "results/publication-2026-10-11.2/candidate-fresh-45/source-signature-results.json",
+        "source_inspection": "results/publication-2026-10-11.2/candidate-source-45/result.json",
+        "signed_metadata_comparison": {
+          "status": "passed",
+          "packages_inspected": 38,
+          "permission_anomalies": 0,
+          "new_scriptlets": 0,
+          "metadata_differences": [
+            {
+              "name": "hyprland-qt-support",
+              "field": "requires",
+              "added": [
+                "libQt6Core.so.6(Qt_6.11_PRIVATE_API)(64bit)"
+              ],
+              "removed": []
+            }
+          ],
+          "difference_scope": "Inherited Qt support build requires nativeQt6.11 privateABI; exact signed install/upgrade closure and actual GUI tests independently required."
+        },
+        "install_upgrade_cases": {
+          "fresh": {
+            "status": "passed",
+            "exact_runtime_devel_packages": 38,
+            "unexpected_removals": [],
+            "downgrades": [],
+            "system_lua_before": null,
+            "system_lua_after": null,
+            "result": "results/publication-2026-10-11.2/candidate-fresh-45/result.json",
+            "before_nevras_sha256": "200ebb03e9a7e50e37dce605e559f18609d3b852e16b8eced6f2be4cbc845221",
+            "after_nevras_sha256": "2a75ee7388e549676e1c650f1d8388299fd1c9bceba8d5547b39073895d948ba"
+          },
+          "previous": {
+            "status": "passed",
+            "exact_runtime_devel_packages": 38,
+            "unexpected_removals": [],
+            "downgrades": [],
+            "system_lua_before": [
+              "0",
+              "5.5.1",
+              "2.fc45"
+            ],
+            "system_lua_after": [
+              "0",
+              "5.5.1",
+              "2.fc45"
+            ],
+            "result": "results/publication-2026-10-11.2/candidate-previous-45/result.json",
+            "before_nevras_sha256": "5f0c1c97f38aefcea36ad92ad113159e5cc7ea7f5572a070abe62d54eda6c020",
+            "after_nevras_sha256": "e01d9ade772080f81963d7b9e8e6510b2f37510ce9e18177e61179fe19032038"
+          },
+          "fedora": {
+            "status": "passed",
+            "exact_runtime_devel_packages": 38,
+            "unexpected_removals": [],
+            "downgrades": [],
+            "system_lua_before": [
+              "0",
+              "5.5.1",
+              "2.fc45"
+            ],
+            "system_lua_after": [
+              "0",
+              "5.5.1",
+              "2.fc45"
+            ],
+            "result": "results/publication-2026-10-11.2/candidate-fedora-45/result.json",
+            "before_nevras_sha256": "bc5fc3c26f743ffcc402c36ffbe06af5cacab3f952032f7149476e803b294da4",
+            "after_nevras_sha256": "e01d9ade772080f81963d7b9e8e6510b2f37510ce9e18177e61179fe19032038"
+          },
+          "minimal": {
+            "status": "passed",
+            "exact_runtime_devel_packages": 38,
+            "unexpected_removals": [],
+            "downgrades": [],
+            "system_lua_before": null,
+            "system_lua_after": null,
+            "result": "results/publication-2026-10-11.2/candidate-minimal-45/result.json",
+            "before_nevras_sha256": "7c86293bbe1dd702d8cdf43de6f2d14247671853cecebb4fac67d9a814d5c870",
+            "after_nevras_sha256": "9ef4f4622a3fb0fb9d40f4de3113b1ca7cc65a2472170232ae54a13fc9249115",
+            "nm_automatically_installed_owner": "binutils-2.47-1.fc45.x86_64",
+            "preinstall_nm_absent": true
+          }
+        },
+        "latest_development_metadata_install": "results/publication-2026-10-11.2/development-fresh-45/result.json"
+      }
+    }
+  },
+  "runtime_validation": {
+    "status": "passed",
+    "scope": "Disposable KVM guests with actual PAM/logind local sessions and virtio/virgl graphics. All four plugins load/render/unload, reload/client survival, wallpaper, Glaze systeminfo/shutdown consumers, idle/resume, wrong/correct lock PAM, private/native Lua bindings, polkit cancel/wrong/success authentication and real portal/PipeWire frames.",
+    "targets": {
+      "44": {
+        "status": "passed",
+        "signed_candidate_install": "results/publication-2026-10-11.2/vm-44/candidate-install-result.json",
+        "session_result": "results/publication-2026-10-11.2/vm-44/session-result.json",
+        "qualification": "results/publication-2026-10-11.2/vm-44/qualification-result.json",
+        "tests": [
+          "native VM compositor startup, output and Lua configuration",
+          "Wayland terminal maps",
+          "libborders-plus-plus.so loads, renders with client, unloads",
+          "libcsgo-vulkan-fix.so loads, renders with client, unloads",
+          "libhyprbars.so loads, renders with client, unloads",
+          "libhyprfocus.so loads, renders with client, unloads",
+          "configuration reload and client survival",
+          "hyprpaper wallpaper surface maps and screenshot capture succeeds",
+          "hyprsysteminfo maps and renders system/compositor information",
+          "hyprshutdown dry-run parses live compositor JSON, maps and preserves apps",
+          "hypridle timeout and input-driven resume hooks",
+          "hyprlock engages, rejects wrong password, PAM unlock succeeds",
+          "active local PAM/logind session in disposable VM",
+          "patched isolated Lua ABI for configuration; libinput retains native Lua bindings",
+          "hyprpolkitagent cancellation, wrong-password denial and successful authentication",
+          "real portal chooser, ScreenCast session and three PipeWire screen frames"
+        ],
+        "lua_bindings": {
+          "status": "passed",
+          "configuration_runtime_owner": "lua55-5.5.1-4.fc44.x86_64",
+          "private_binding_count": 64,
+          "native_input_binding_count": 45,
+          "loaded_lua_paths": [
+            "/usr/lib64/liblua-5.4.so",
+            "/usr/lib64/liblua5.5.so.1.0.0"
+          ]
+        },
+        "portal_frame_sha256": {
+          "portal-frame-00.raw": "065a7799a0c86375f22ce5a6138b525be1a3dae6b9c561542e586d40b4503347",
+          "portal-frame-01.raw": "36bdc96fa25b5b753a642edc07067c1e64f82bba05de5d464fa403c8f736e09d",
+          "portal-frame-02.raw": "aeb033d48ef6b3b37ed0bc850ffc7d7b58bb8c7a173ac63b729675f4e8781566"
+        },
+        "evidence": "results/publication-2026-10-11.2/vm-44/runtime-evidence",
+        "vm_origin": "Task-created signed Fedora cloud image, updated before tests; final candidate upgrades the preserved rejected first candidate. Separately installed diagnostic nm is disclosed; independent minimal fresh installs prove automatic dependency on both targets."
+      },
+      "45": {
+        "status": "passed",
+        "signed_candidate_install": "results/publication-2026-10-11.2/vm-45/candidate-install-result.json",
+        "session_result": "results/publication-2026-10-11.2/vm-45/session-result.json",
+        "qualification": "results/publication-2026-10-11.2/vm-45/qualification-result.json",
+        "tests": [
+          "native VM compositor startup, output and Lua configuration",
+          "Wayland terminal maps",
+          "libborders-plus-plus.so loads, renders with client, unloads",
+          "libcsgo-vulkan-fix.so loads, renders with client, unloads",
+          "libhyprbars.so loads, renders with client, unloads",
+          "libhyprfocus.so loads, renders with client, unloads",
+          "configuration reload and client survival",
+          "hyprpaper wallpaper surface maps and screenshot capture succeeds",
+          "hyprsysteminfo maps and renders system/compositor information",
+          "hyprshutdown dry-run parses live compositor JSON, maps and preserves apps",
+          "hypridle timeout and input-driven resume hooks",
+          "hyprlock engages, rejects wrong password, PAM unlock succeeds",
+          "active local PAM/logind session in disposable VM",
+          "patched isolated Lua ABI for configuration; libinput retains native Lua bindings",
+          "hyprpolkitagent cancellation, wrong-password denial and successful authentication",
+          "real portal chooser, ScreenCast session and three PipeWire screen frames"
+        ],
+        "lua_bindings": {
+          "status": "passed",
+          "configuration_runtime_owner": "lua55-5.5.1-4.fc45.x86_64",
+          "private_binding_count": 64,
+          "native_input_binding_count": 45,
+          "loaded_lua_paths": [
+            "/usr/lib64/liblua-5.5.so",
+            "/usr/lib64/liblua5.5.so.1.0.0"
+          ]
+        },
+        "portal_frame_sha256": {
+          "portal-frame-00.raw": "fe9cdadc8881019369ad60b61c710e62c9b6e7cbae51a79a4566ef36f97c6abc",
+          "portal-frame-01.raw": "a439d99f0654b3aa3a23eb5d0d034c9b1a0d8e13e755bbc88c997fbe66f4711a",
+          "portal-frame-02.raw": "c78cf4e0ff9cd30bafaf6c5830cb32d45f369271df2337d439f4e6460bf6988f"
+        },
+        "evidence": "results/publication-2026-10-11.2/vm-45/runtime-evidence",
+        "vm_origin": "Task-created signed Fedora cloud image, updated before tests; final candidate upgrades the preserved rejected first candidate. Separately installed diagnostic nm is disclosed; independent minimal fresh installs prove automatic dependency on both targets."
+      }
+    },
+    "limits": [
+      "No physical GPU/HDR/multi-monitor qualification",
+      "No hardware suspend or game/Vulkan workload qualification",
+      "No exhaustive desktop/third-party plugin correctness or system-wide security claim",
+      "Fedora45 native Lua remains unpatched; reviewed libinput scope/default collector and API limitations are recorded separately",
+      "Unchanged uwsm, hyprshot, hyprpicker, hyprsunset, launcher, audio-center and Qt engine do not receive separate full functional session qualification in this maintenance release."
+    ],
+    "superseded_fixture_attempt": {
+      "reason": "Initial final-candidate runtime actions passed, but evidence review found an obsolete lock configuration option. Both full suites were repeated after removing it and adding a configuration-error assertion. Exact signed RPMs unchanged.",
+      "evidence": {
+        "44": "results/publication-2026-10-11.2/vm-44/obsolete-lock-fixture/scope.json",
+        "45": "results/publication-2026-10-11.2/vm-45/obsolete-lock-fixture/scope.json"
+      }
+    },
+    "portal_screenshot_timing_attempt": {
+      "reason": "Portal chooser response and three frames already passed. Initial screenshot preceded first rendered chooser frame; explicit picker focus and render delay added, then both full suites repeated with unchanged exact signed RPMs.",
+      "evidence": {
+        "44": "results/publication-2026-10-11.2/vm-44/portal-screenshot-timing/scope.json",
+        "45": "results/publication-2026-10-11.2/vm-45/portal-screenshot-timing/scope.json"
+      }
+    },
+    "portal_focus_syntax_failure": {
+      "status": "failed-fixture-corrected",
+      "reason": "The added focus call used pre-Lua dispatcher syntax and failed both tests. Corrected to the already-tested hl.dsp.focus call and complete suites repeated with unchanged signed RPMs.",
+      "evidence": {
+        "44": "results/publication-2026-10-11.2/vm-44/portal-focus-syntax-failure/scope.json",
+        "45": "results/publication-2026-10-11.2/vm-45/portal-focus-syntax-failure/scope.json"
+      }
+    },
+    "evidence_review": {
+      "status": "passed",
+      "critical_session_log_matches": [],
+      "scope": "Reviewed current session logs for missing/undefined symbols, ABI mismatch, crashes and configuration errors. Expected virtual GBM allocation warnings and intentional failed authentication are retained. Viewed final chooser screenshots on both targets and same-candidate systeminfo, plugin and wrong-password UI screenshots.",
+      "final_chooser_screenshot_sha256": {
+        "44": "314605c6ca990af9ea10275f373155a2dc2d90558e60e8ca8b1d23284b9fda6c",
+        "45": "7717dcb28abab7961496f1b753db8af06e451c0c8fef3359be84314b859c272a"
+      }
+    }
+  },
+  "project_publication_review": {
+    "status": "passed",
+    "reviewed_at": "2026-10-11T23:48:16.487592+00:00",
+    "new_build_ids": [
+      11109404,
+      11109405,
+      11109409,
+      11109410,
+      11109411,
+      11109487,
+      11109682,
+      11109690,
+      11109743
+    ],
+    "unrelated_new_builds": [],
+    "active_builds": [],
+    "latest_successful_builds": {
+      "hyprland-plugins": 11109743,
+      "hyprland": 11109690,
+      "lua55": 11109682,
+      "hyprsysteminfo": 11109411,
+      "hyprshutdown": 11109410,
+      "glaze": 11109404,
+      "hyprcursor": 11004546,
+      "hyprpwcenter": 11002514,
+      "hyprpolkitagent": 11002513,
+      "hyprpaper": 11002512,
+      "hyprlauncher": 11002511,
+      "hyprland-guiutils": 11002510,
+      "xdg-desktop-portal-hyprland": 11002508,
+      "hyprtoolkit": 11002507,
+      "hyprsunset": 11002506,
+      "hypridle": 11002505,
+      "hyprland-protocols": 11002501,
+      "aquamarine": 11002477,
+      "uwsm": 11002476,
+      "hyprutils": 11002474,
+      "hyprshot": 10933896,
+      "hyprwire": 10933499,
+      "hyprgraphics": 10933498,
+      "hyprqt6engine": 10933358,
+      "hyprlock": 10933357,
+      "hyprland-qt-support": 10933356,
+      "hyprpicker": 10933344,
+      "hyprlang": 10933343,
+      "hyprwayland-scanner": 10933334
+    },
+    "superseded_attempt_build_ids": [
+      11109405,
+      11109409,
+      11109487
+    ],
+    "superseded_scope": "Older attempted versions remain build history; fresh development metadata by package name must select the exact newer qualified RPMs. No old attempted release is selected as current candidate.",
+    "manual_publication_enabled": true,
+    "build_networking_enabled": false,
+    "project_key_unchanged": true
   }
 }

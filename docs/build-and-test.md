@@ -111,3 +111,18 @@ Use the same `--package` selection if the original run was targeted. Changed
 inputs, extra/modified RPMs, a changed image or older results without artifact
 checksums require a new run. Do not resume a directory while another build is
 using it. Use `--jobs 2` on memory-constrained machines (default: 4).
+
+If a mirror stalls while fetching thousands of zchunk ranges, preserve the
+preparation/container DNF log and the failed package log before retrying. The
+optional `--no-zchunk` selects full repository metadata through DNF's documented
+[zchunk option](https://dnf5.readthedocs.io/en/latest/dnf5.conf.5.html#zchunk).
+It does not disable RPM signatures or change the offline/nonroot source build.
+After the stopped run has exited and cleaned up its own container, resume only
+when frozen inputs, image and every completed RPM checksum still match:
+
+```bash
+./scripts/build-container --fedora 45 --jobs 8 --no-zchunk \
+  --resume results/fedora-45-<timestamp>
+```
+
+Record both attempts, the transport change and the validation driver hash.

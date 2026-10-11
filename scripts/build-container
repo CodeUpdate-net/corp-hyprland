@@ -25,7 +25,10 @@ def main():
     parser.add_argument('--package', help='Build this package and its manifest dependency closure')
     parser.add_argument('--jobs', type=int, default=4, help='Compiler jobs per package (default: 4)')
     parser.add_argument('--resume', type=Path, help='Resume unchanged inputs from a failed results directory')
+    parser.add_argument('--no-zchunk', action='store_true',
+                        help='Use full repository metadata when a mirror stalls zchunk range downloads')
     args = parser.parse_args()
+    dnf_transport = '--setopt=zchunk=False' if args.no_zchunk else ''
     if args.jobs < 1:
         parser.error('--jobs must be positive')
     root = Path(__file__).resolve().parents[1]
@@ -70,7 +73,9 @@ def main():
         '-f', str(root / 'scripts/Containerfile'), str(root / 'scripts'))
     image_id = subprocess.check_output(['podman', 'image', 'inspect', '--format', '{{.Id}}', base], text=True).strip()
     evidence = {'release_set': manifest.release_set, 'fedora': args.fedora, 'image_id': image_id,
-                'packages': [], 'status': 'running'}
+                'packages': [], 'status': 'running', 'dnf_zchunk': not args.no_zchunk,
+                'validation_driver_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                'compiler_jobs': args.jobs}
     evidence_path = output / 'result.json'
     names = [name for name in manifest.build_order() if name in selected]
     if args.resume:
@@ -106,12 +111,12 @@ def main():
                         base, 'createrepo_c', '/repo', stdout=log, stderr=subprocess.STDOUT)
                     run('podman', 'run', '--name', prepare,
                         '-v', f'{inputs}:/src:ro,z', '-v', f'{output}/rpms:/repo:ro,z', base,
-                        'bash', '-euc', '''
+                        'bash', '-euc', f'''
 mkdir -p /build/source /build/RPMS /build/SRPMS
 cp -a "/src/packages/$1/." /build/source/
 cd /build/source
 sha256sum --check sources
-dnf -y --setopt=timeout=30 --setopt=minrate=10000 --setopt=retries=3 --repofrompath=local-build,file:///repo --setopt=local-build.gpgcheck=0 builddep "$1.spec"
+dnf -y {dnf_transport} --setopt=timeout=30 --setopt=minrate=10000 --setopt=retries=3 --repofrompath=local-build,file:///repo --setopt=local-build.gpgcheck=0 builddep "$1.spec"
 chown -R builder:builder /build
 ''', 'prepare', name, stdout=log, stderr=subprocess.STDOUT)
                     run('podman', 'commit', prepare, temporary_image, stdout=log, stderr=subprocess.STDOUT)
@@ -132,7 +137,7 @@ chown -R builder:builder /build
             evidence_path.write_text(json.dumps(evidence, indent=2) + '\n')
         with (output / 'install.log').open('w') as log:
             run('podman', 'run', '--rm', '-v', f'{output}/rpms:/repo:ro,z', base,
-                'bash', '-euc', 'dnf -y --setopt=timeout=30 --setopt=minrate=10000 --setopt=retries=3 install /repo/*/*.rpm; dnf check',
+                'bash', '-euc', f'dnf -y {dnf_transport} --setopt=timeout=30 --setopt=minrate=10000 --setopt=retries=3 install /repo/*/*.rpm; dnf check',
                 stdout=log, stderr=subprocess.STDOUT)
         with (output / 'rpmlint.log').open('w') as log:
             run('podman', 'run', '--rm', '--network=none', '-v', f'{output}/rpms:/repo:ro,z',

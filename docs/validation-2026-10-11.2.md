@@ -20,9 +20,18 @@ unchanged. Glaze 7.9.1 remains within the compositor's required 7.x range.
 
 ## Validation and publication
 
-Checks are in progress. Results, exact artifact/signature evidence, dependency
-and upgrade transactions, actual runtime coverage and remaining limits belong
-in [the release record](../releases/2026-10-11.2.json). COPR remains in manual
+Repository checks and full offline nonroot Podman builds passed on both
+targets: all 29 packages built, all 89 binary RPMs installed, `dnf check` passed
+and RPM lint reported zero errors. Metadata/security inspection of all 38
+runtime/devel RPMs per target found no setuid/setgid, file-capability or unexpected
+world-writable files, and no new scriptlets. Both Hyprland RPMs and plugins require
+`liblua5.5.so.0`; plugins pin the compositor exactly at 0.56.2-6. All 74 tracked
+recipe inputs and 29 selected archive digests match the immutable source commit
+`91d51a517c713dfa6b09812ebe7f9aa2462166b6`, whose GitHub CI also passed.
+
+COPR builds, signatures, upgrades and full-session tests are pending. Results,
+exact artifact/signature evidence, dependency and upgrade transactions, actual
+runtime coverage and remaining limits belong in [the release record](../releases/2026-10-11.2.json). COPR remains in manual
 mode with build networking disabled. No regeneration occurs until the
 required prepublication checks pass.
 

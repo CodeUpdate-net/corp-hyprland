@@ -42,3 +42,20 @@ upgrade origin is therefore not applicable; it is not recorded as passed.
 The Fedora transition test will install all available native Hypr libraries/
 devel packages plus system Lua, then install the complete signed candidate.
 The full previous-public-COPR upgrade remains a separate required gate.
+
+## Rejected first attempt and runtime dependency repair
+
+The first signed candidate (Hyprland 0.56.2-6, plugins 0.56.0-5) passed builds,
+source/signature inspection and all six install/upgrade cases. Actual VM tests
+on both targets failed at csgo-vulkan-fix hook discovery. The verified compositor
+PluginAPI.cpp calls GNU `nm`, which was absent from the fresh runtime VMs. This
+is a packaging dependency failure; the compiler-equipped build containers had
+masked it. No repository regeneration occurred. Full first-attempt evidence is
+retained in [its rejected candidate record](../releases/2026-10-11.2-attempt-1.json).
+
+Hyprland 0.56.2-7 now requires `/usr/bin/nm`, and plugins 0.56.0-6 pin that exact
+compositor release. Fresh full builds and qualification are being repeated.
+The four other changed recipes are unchanged and retain their exact signed
+COPR builds from immutable commit 91d51a5; each build's recipe commit is recorded.
+A diagnostic test with Fedora binutils installed separately cannot qualify the
+original shipping candidate and is recorded separately from the final tests.

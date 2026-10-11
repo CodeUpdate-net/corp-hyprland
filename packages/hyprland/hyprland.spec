@@ -1,6 +1,6 @@
 Name:           hyprland
 Version:        0.56.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Dynamic tiling Wayland compositor
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/Hyprland
@@ -54,6 +54,8 @@ BuildRequires:  pkgconfig(xkbcommon) >= 1.11
 BuildRequires:  hyprwayland-scanner-devel >= 0.3.10
 BuildRequires:  systemd-rpm-macros
 Requires:       lua55%{?_isa} >= 5.5.1-3%{?dist}
+# GCC-built plugin symbol discovery invokes GNU nm at runtime.
+Requires:       /usr/bin/nm
 Requires:       xorg-x11-server-Xwayland
 Recommends:     uwsm >= 0.26.7
 Recommends:     xdg-desktop-portal-hyprland
@@ -117,6 +119,9 @@ sed -i '/^Requires:/ s/$/, libeis-1.0, lua55 >= 5.5/' \
 %{_datadir}/pkgconfig/hyprland.pc
 
 %changelog
+* Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-7
+- Require nm for plugin API symbol discovery on fresh runtime installations
+
 * Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-6
 - Use the patched parallel Lua runtime on both Fedora 44 and 45
 - Require the validated fixed Lua RPM release for build and runtime dependencies

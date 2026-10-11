@@ -143,3 +143,16 @@ OpenPipeWireRemote and three actual screen frames through GStreamer, following
 Record the actual per-release results; this procedure's availability is not a
 pass. Virtual GPU coverage does not establish physical GPU, HDR, multi-monitor,
 suspend/resume or game-specific Vulkan behavior.
+
+### Graphical-session and chooser prerequisites
+
+A bare VM tty autologin does not activate Fedora's `graphical-session.target`.
+The disposable fixture creates `corp-runtime-session.target`, bound to the
+standard graphical-session target, starts it after exporting the compositor
+environment, and stops it during cleanup. Fedora's portal unit requires this
+target; removing that requirement would weaken the test. The verified portal
+1.4.1 source opens its monitor chooser during `SelectSources`, so the fixture
+selects the real monitor there before calling `Start`. Retain chooser screenshots,
+portal responses, three PipeWire frames, user/root journals and polkit scenario
+timestamps. Wrong-password qualification additionally checks the matching PAM
+failure in the journal, rather than relying solely on a canceled request's exit.

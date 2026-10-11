@@ -6,7 +6,7 @@
   "status": "rebuilding-isolated-lua-and-runtime-dependency-fixes",
   "project": "dtutila/hyprland",
   "source_repository": "https://github.com/CodeUpdate-net/corp-hyprland.git",
-  "source_commit": "13153e34a92561436ab8d3d17d0bed61ebeb3df6",
+  "source_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d",
   "branch": "release-set/2026-10-11.2",
   "base_commit": "83b0705cf973192326d187b04fee32e277a5c38f",
   "chroots": [
@@ -23,7 +23,8 @@
       "source_sha256": "d6dee391276f5375672c35d06058e4fd8f1f30f62bae163a004b3bd13a4e2ae3",
       "build_id": 11109404,
       "changed": true,
-      "inherited": false
+      "inherited": false,
+      "recipe_commit": "91d51a517c713dfa6b09812ebe7f9aa2462166b6"
     },
     "lua55": {
       "version": "5.5.1",
@@ -32,7 +33,8 @@
       "source_sha256": "ffed0b0e2987e66b0142491b26c63170ffd2d86e425ff3703799f4933fd91810",
       "build_id": null,
       "changed": true,
-      "inherited": false
+      "inherited": false,
+      "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d"
     },
     "uwsm": {
       "version": "0.27.0",
@@ -140,7 +142,8 @@
       "source_sha256": "ddeb92a654fa65d41ed2add3176de4fe54eab3752441c33ca99f5e598e0571e5",
       "build_id": null,
       "changed": true,
-      "inherited": false
+      "inherited": false,
+      "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d"
     },
     "hyprland-plugins": {
       "version": "0.56.0",
@@ -149,7 +152,8 @@
       "source_sha256": "9520567c1ba01add35b008db4160c6b9bba09fa65a16c09aa4fd71bca692e525",
       "build_id": null,
       "changed": true,
-      "inherited": false
+      "inherited": false,
+      "recipe_commit": "da97869f525f974ec1381233ac1b3ca6a9ff8d9d"
     },
     "xdg-desktop-portal-hyprland": {
       "version": "1.4.1",
@@ -266,7 +270,8 @@
       "source_sha256": "32adb385b7bfe22398d45cd5325416bf0ac3ae4a5bd89678353dae96f92ba638",
       "build_id": 11109410,
       "changed": true,
-      "inherited": false
+      "inherited": false,
+      "recipe_commit": "91d51a517c713dfa6b09812ebe7f9aa2462166b6"
     },
     "hyprsysteminfo": {
       "version": "0.2.0",
@@ -275,7 +280,8 @@
       "source_sha256": "4f875e7e986deeda35c05090b59f11f3b5802cac8863dafcc6e8251ea37530b1",
       "build_id": 11109411,
       "changed": true,
-      "inherited": false
+      "inherited": false,
+      "recipe_commit": "91d51a517c713dfa6b09812ebe7f9aa2462166b6"
     }
   },
   "local_validation": {
@@ -348,5 +354,30 @@
       }
     },
     "initial_test_fixture_failure": "Initial prototype attempted to resolve luaL_openlibs, which Lua 5.5 defines as a macro. Corrected the test to exported luaopen_base and repeated both target builds successfully; initial logs retained."
+  },
+  "interrupted_local_builds": {
+    "44": {
+      "path": "results/fedora-44-20261011T214531Z-5ae6ec26",
+      "status": "interrupted-superseded-before-copr",
+      "reason": "Stopped nm-only candidate after actual VM loader traces confirmed native/parallel Lua symbol interposition; frozen inputs preserved, new full build required."
+    },
+    "45": {
+      "path": "results/fedora-45-20261011T214532Z-609e68d2",
+      "status": "interrupted-superseded-before-copr",
+      "reason": "Stopped nm-only candidate after actual VM loader traces confirmed native/parallel Lua symbol interposition; frozen inputs preserved, new full build required."
+    }
+  },
+  "diagnostic_service_validation": {
+    "status": "services-passed-original-candidate-still-rejected",
+    "scope": "Task VMs with separately installed nm; all desktop, four plugins, lock/PAM, polkit cancellation/wrong-password/success and actual portal/PipeWire three-frame tests passed, while Lua qualification remained failed. Not final shipping qualification.",
+    "evidence": {
+      "44": "results/publication-2026-10-11.2/vm-44/diagnostic-picker/session-result.json",
+      "45": "results/publication-2026-10-11.2/vm-45/diagnostic-picker/session-result.json"
+    },
+    "fixture_corrections": [
+      "Bare tty login needed a dedicated graphical-session target; retained Fedora portal Requisite.",
+      "Verified portal1.4.1 opens picker in SelectSources, so choose there before Start."
+    ],
+    "visual_review": "Fedora44 real monitor picker and Fedora45 wrong-password Authentication failed screenshots inspected."
   }
 }

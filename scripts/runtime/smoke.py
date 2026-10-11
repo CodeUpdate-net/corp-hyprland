@@ -106,6 +106,9 @@ except Exception as error:
     (out / 'result.json').write_text(json.dumps({'status': 'failed', 'tests_completed': passed, 'error': str(error)}, indent=2))
     raise
 finally:
+    if vm_mode and os.environ.get('CORP_SESSION_TESTS') == '1':
+        subprocess.run(['systemctl', '--user', 'stop', 'corp-runtime-session.target'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     for source in runtime.glob('hypr/*/*.log'):
         shutil.copyfile(source, out / ('compositor-' + source.name))
     for p in processes:

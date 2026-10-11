@@ -6,6 +6,14 @@ systemd-detect-virt --vm
 [[ $(id -u) == 0 ]]
 test -f /opt/corp-test/smoke.py
 id corp-test
+# A bare tty login does not activate graphical-session.target. Give this
+# disposable compositor fixture its own target, like a desktop session manager.
+cat > /etc/systemd/user/corp-runtime-session.target <<'UNIT'
+[Unit]
+Description=Disposable COPR compositor runtime session
+BindsTo=graphical-session.target
+Before=graphical-session.target
+UNIT
 install -d -m0755 /etc/systemd/system/getty@tty1.service.d
 cat > /etc/systemd/system/getty@tty1.service.d/corp-runtime.conf <<'UNIT'
 [Service]

@@ -139,6 +139,13 @@ def check_session(out, run, ctl, wait_for, processes, passed):
                            if 'Select what to share' in c['title']]
                 if pickers:
                     (out / 'portal-picker.json').write_text(json.dumps(pickers, indent=2))
+                    address = pickers[0]['address']
+                    ctl('dispatch', 'focuswindow', 'address:' + address)
+                    wait_for(lambda: json.loads(ctl('-j', 'activewindow')).get('address') == address,
+                             'Screen-sharing picker did not receive focus')
+                    # Mapping precedes the first rendered frame. Capture the
+                    # chooser after painting, before selecting the monitor.
+                    time.sleep(.5)
                     run('grim', str(out / 'portal-picker.png'))
                     # The verified picker UI focuses the tab widget; the next
                     # focusable widget is the first real monitor button.

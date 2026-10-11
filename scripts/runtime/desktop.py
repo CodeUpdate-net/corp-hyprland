@@ -66,9 +66,11 @@ def check_desktop(out, run, ctl, wait_for, processes, passed):
     passed.append('hypridle timeout and input-driven resume hooks')
 
     config = out / 'hyprlock.conf'
-    config.write_text('general {\n grace = 0\n}\nanimations {\n enabled = false\n}\nbackground {\n color = rgb(294a6f)\n}\ninput-field {\n size = 300, 50\n fade_on_empty = false\n}\n')
+    config.write_text('animations {\n enabled = false\n}\nbackground {\n color = rgb(294a6f)\n}\ninput-field {\n size = 300, 50\n fade_on_empty = false\n}\n')
     lock = launch('hyprlock', ['hyprlock', '-c', str(config)])
     wait_for(lambda: 'onLockLocked called' in (out / 'hyprlock.log').read_text(), 'Session lock did not engage')
+    lock_log = (out / 'hyprlock.log').read_text().lower()
+    assert 'config error' not in lock_log and 'config has errors' not in lock_log, 'Invalid lock test configuration'
     run('wtype', 'wrong-runtime-password')
     run('wtype', '-k', 'Return')
     time.sleep(5)

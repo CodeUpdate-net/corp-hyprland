@@ -1167,5 +1167,21 @@
         "runtime_scripts_git_revision": "82dfa53f3c54c2a399e77eacd171a54cf54aab3c"
       }
     }
+  },
+  "evidence_relocation_map": {
+    "results/publication-2026-10-11.2/signed-candidate/lua55/": "results/publication-2026-10-11.2/candidate-attempt-1/signed-candidate/lua55/",
+    "results/publication-2026-10-11.2/signed-candidate/hyprland/": "results/publication-2026-10-11.2/candidate-attempt-1/signed-candidate/hyprland/",
+    "results/publication-2026-10-11.2/signed-candidate/hyprland-plugins/": "results/publication-2026-10-11.2/candidate-attempt-1/signed-candidate/hyprland-plugins/",
+    "results/publication-2026-10-11.2/copr-builds/lua55/": "results/publication-2026-10-11.2/candidate-attempt-1/copr-builds/lua55/",
+    "results/publication-2026-10-11.2/copr-builds/hyprland/": "results/publication-2026-10-11.2/candidate-attempt-1/copr-builds/hyprland/",
+    "results/publication-2026-10-11.2/copr-builds/hyprland-plugins/": "results/publication-2026-10-11.2/candidate-attempt-1/copr-builds/hyprland-plugins/"
+  },
+  "additional_diagnostic_findings": {
+    "lua_interposition": "After separately adding nm, all45 native libinput Lua API references bound to the parallel unprefixed runtime; Fedora44 was a nativeLua5.4/parallelLua5.5 ABI collision. Prefix exports and bump SONAME before new qualification.",
+    "evidence": {
+      "44": "results/publication-2026-10-11.2/vm-44/lua-loader-bindings-diagnostic.log",
+      "45": "results/publication-2026-10-11.2/vm-45/lua-loader-bindings-diagnostic.log"
+    },
+    "independent_services_diagnostic": "With nm and corrected test session prerequisites, all desktop/polkit/portal diagnostics completed; overall candidate status remained failed due Lua. No publication."
   }
 }

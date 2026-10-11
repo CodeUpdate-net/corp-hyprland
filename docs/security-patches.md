@@ -88,3 +88,37 @@ It is a packaging safeguard, not a networking runtime security certification.
 
 See [the current review](validation-2026-10-11.md) for source checks, upstream
 parser/file-handling fixes, rebuild scope and validation limitations.
+
+## Parallel Lua isolation in publication repair 2026-10-11.2
+
+Lua55 5.5.1-4 keeps the reviewed GC backport and gives its 157 public C exports
+private names through [lua55-prefix.h](../packages/lua55/lua55-prefix.h).
+The installed headers preserve source API spelling; the binary ABI deliberately
+changes to `liblua5.5.so.1`. Hyprland 0.56.2-7 and plugins 0.56.0-6 rebuild against
+this ABI, with exact compositor pins and a minimum Lua55 release dependency.
+Native Fedora Lua remains unchanged for Fedora's own consumers.
+
+The original SONAME-only arrangement exported the same unversioned function
+names as native Lua. Actual loader traces showed libinput resolving its calls
+to the parallel runtime on both targets, crossing Lua 5.4/5.5 ABIs on Fedora 44.
+This downstream fix prevents that collision for the reviewed public API; it does
+not make arbitrary native C modules safe to load. Native modules used with Lua55
+must compile against `lua55-devel`. The package's ordinary mixed-runtime test
+uses independent native/private states in both global loader orders and rejects
+native API exports. Actual VM qualification also checks the compositor's private
+bindings and libinput's native bindings, alongside a running Lua configuration.
+
+The same repair adds `/usr/bin/nm` to the compositor's runtime dependencies.
+Its plugin API uses GNU nm for hook discovery; minimal install tests must check
+that binutils is installed automatically. Compiler-equipped build roots alone
+cannot establish that runtime dependency coverage.
+
+Fedora 45's native `lua-libs-5.5.1-2` still lacks the GC guard. An ordinary state
+probe confirmed its default collector is incremental. Actual libinput loader
+bindings contain no `lua_gc` reference, and the
+[official libinput sandbox API](https://wayland.freedesktop.org/libinput/doc/latest/lua-plugins.html)
+excludes `collectgarbage`. Together with the verified guard's placement in the
+generational major/minor transition, this supports the limited inference that
+the reviewed libinput path does not switch into that affected mode. It is not a
+fix or a general security certification for system Lua or other Fedora consumers.
+See the exact probe and binding evidence in the release record.

@@ -28,7 +28,7 @@ BuildRequires:  pkgconfig(lcms2)
 BuildRequires:  pkgconfig(libeis-1.0)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libinput) >= 1.29
-BuildRequires:  lua55-devel >= 5.5.1-3%{?dist}
+BuildRequires:  lua55-devel >= 5.5.1-4%{?dist}
 BuildRequires:  pkgconfig(lua55) >= 5.5
 BuildRequires:  pkgconfig(muparser)
 BuildRequires:  pkgconfig(pango)
@@ -53,7 +53,7 @@ BuildRequires:  pkgconfig(xcursor)
 BuildRequires:  pkgconfig(xkbcommon) >= 1.11
 BuildRequires:  hyprwayland-scanner-devel >= 0.3.10
 BuildRequires:  systemd-rpm-macros
-Requires:       lua55%{?_isa} >= 5.5.1-3%{?dist}
+Requires:       lua55%{?_isa} >= 5.5.1-4%{?dist}
 # GCC-built plugin symbol discovery invokes GNU nm at runtime.
 Requires:       /usr/bin/nm
 Requires:       xorg-x11-server-Xwayland
@@ -67,7 +67,7 @@ extensive configuration support.
 %package devel
 Summary:        Development files for Hyprland plugins
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       lua55-devel%{?_isa} >= 5.5.1-3%{?dist}
+Requires:       lua55-devel%{?_isa} >= 5.5.1-4%{?dist}
 Requires:       glslang-devel
 Requires:       pkgconfig(libeis-1.0)
 
@@ -121,6 +121,7 @@ sed -i '/^Requires:/ s/$/, libeis-1.0, lua55 >= 5.5/' \
 %changelog
 * Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-7
 - Require nm for plugin API symbol discovery on fresh runtime installations
+- Require the isolated patched Lua ABI to avoid native libinput collisions
 
 * Sun Oct 11 2026 COPR Maintainer <noreply@example.invalid> - 0.56.2-6
 - Use the patched parallel Lua runtime on both Fedora 44 and 45

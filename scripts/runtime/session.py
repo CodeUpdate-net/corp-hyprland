@@ -19,13 +19,38 @@ def check_session(out, run, ctl, wait_for, processes, passed):
     own = next(i for i in instances if i['instance'] == os.environ['HYPRLAND_INSTANCE_SIGNATURE'])
     maps = open(f'/proc/{own["pid"]}/maps').read()
     (out / 'compositor-maps.txt').write_text(maps)
-    lua_paths = {line.split()[-1] for line in maps.splitlines() if '/liblua' in line}
-    assert lua_paths and all(os.path.basename(path) == 'liblua5.5.so.0.0.0'
-                             for path in lua_paths), lua_paths
-    owner = run('rpm', '-qf', '/usr/lib64/liblua5.5.so.0.0.0').strip()
-    assert owner.startswith('lua55-5.5.1-3.fc'), owner
-    (out / 'loaded-lua-owner.txt').write_text(owner + '\n')
-    passed.append('running compositor loads patched parallel lua55 RPM')
+    lua_error = None
+    try:
+        lua_paths = {line.split()[-1] for line in maps.splitlines() if '/liblua' in line}
+        assert '/usr/lib64/liblua5.5.so.1.0.0' in lua_paths, lua_paths
+        owner = run('rpm', '-qf', '/usr/lib64/liblua5.5.so.1.0.0').strip()
+        assert owner.startswith('lua55-5.5.1-4.fc'), owner
+        (out / 'loaded-lua-owner.txt').write_text(owner + '\n')
+        # libinput legitimately maps Fedora's native Lua too. Check actual
+        # symbol ownership instead of assuming that no other Lua is loaded.
+        probe = subprocess.run(['env', 'LD_DEBUG=bindings', 'LD_BIND_NOW=1',
+                                'Hyprland', '--version'], text=True,
+                               capture_output=True, timeout=30)
+        (out / 'lua-loader-bindings.log').write_text(probe.stdout + probe.stderr)
+        probe.check_returncode()
+        rows = [line for line in probe.stderr.splitlines() if 'binding file' in line]
+        private = [line for line in rows if 'file Hyprland ' in line and 'symbol `lua55' in line]
+        native = [line for line in rows if 'file /lib64/libinput.so.10 ' in line
+                  and 'symbol `lua' in line]
+        assert private and all(' to /lib64/liblua5.5.so.1 ' in line for line in private), private
+        assert native and all(' to /lib64/liblua-5.' in line for line in native), native
+        assert not any('file Hyprland ' in line and 'symbol `lua_' in line for line in rows)
+        (out / 'lua-binding-result.json').write_text(json.dumps({
+            'status': 'passed', 'configuration_runtime_owner': owner,
+            'private_binding_count': len(private), 'native_input_binding_count': len(native),
+            'loaded_lua_paths': sorted(lua_paths)}, indent=2) + '\n')
+        passed.append('patched isolated Lua ABI for configuration; libinput retains native Lua bindings')
+    except (AssertionError, subprocess.SubprocessError) as error:
+        # Preserve an overall failure, but collect independent portal/polkit
+        # evidence as well when diagnosing a candidate in the disposable VM.
+        lua_error = str(error)
+        (out / 'lua-binding-result.json').write_text(json.dumps({
+            'status': 'failed', 'error': lua_error}, indent=2) + '\n')
 
     run('dbus-update-activation-environment', '--systemd', 'WAYLAND_DISPLAY',
         'XDG_CURRENT_DESKTOP', 'XDG_SESSION_TYPE', 'XDG_RUNTIME_DIR',
@@ -153,3 +178,6 @@ def check_session(out, run, ctl, wait_for, processes, passed):
                           'org.freedesktop.portal.Session', 'Close', None, None,
                           Gio.DBusCallFlags.NONE, 30000, None)
         bus.signal_unsubscribe(subscription)
+
+    if lua_error is not None:
+        raise RuntimeError('Lua binding qualification failed: ' + lua_error)

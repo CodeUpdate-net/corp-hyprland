@@ -140,7 +140,7 @@ def check_session(out, run, ctl, wait_for, processes, passed):
                 if pickers:
                     (out / 'portal-picker.json').write_text(json.dumps(pickers, indent=2))
                     address = pickers[0]['address']
-                    ctl('dispatch', 'focuswindow', 'address:' + address)
+                    ctl('dispatch', 'hl.dsp.focus({window = "address:' + address + '"})')
                     wait_for(lambda: json.loads(ctl('-j', 'activewindow')).get('address') == address,
                              'Screen-sharing picker did not receive focus')
                     # Mapping precedes the first rendered frame. Capture the
